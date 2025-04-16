@@ -3,6 +3,7 @@
 
 -- Services
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 
 -- Dark & Blue color palette
 local COLORS = {
@@ -1155,3 +1156,72 @@ if closeBtn then
 else
     debugPrint("closeBtn is not initialized")
 end
+
+-- Add dragging functionality to title bar
+local dragging = false
+local dragStart = nil
+local startPos = nil
+
+local function updateDrag(input)
+    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local delta = input.Position - dragStart
+        local targetPosition = UDim2.new(
+            startPos.X.Scale,
+            startPos.X.Offset + delta.X,
+            startPos.Y.Scale,
+            startPos.Y.Offset + delta.Y
+        )
+        
+        -- Create smooth dragging effect
+        local tweenInfo = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+        TweenService:Create(mainFrame, tweenInfo, {Position = targetPosition}):Play()
+    end
+end
+
+-- Create a draggable area in the title bar (excluding buttons)
+local dragArea = Instance.new("Frame")
+dragArea.Name = "DragArea"
+dragArea.Size = UDim2.new(1, -180, 1, 0)  -- Full height, but leave space for buttons
+dragArea.Position = UDim2.new(0, 90, 0, 0)  -- Centered in remaining space
+dragArea.BackgroundTransparency = 1  -- Invisible
+dragArea.Parent = titleBar
+dragArea.ZIndex = 2
+
+dragArea.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+        
+        -- Change cursor to indicate dragging
+        dragArea.Parent.BackgroundTransparency = 0.05
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    updateDrag(input)
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = false
+        dragStart = nil
+        startPos = nil
+        
+        -- Restore title bar appearance
+        dragArea.Parent.BackgroundTransparency = 0.1
+    end
+end)
+
+-- Add visual feedback for draggable area
+dragArea.MouseEnter:Connect(function()
+    if not dragging then
+        TweenService:Create(dragArea.Parent, TweenInfo.new(0.2), {BackgroundTransparency = 0.05}):Play()
+    end
+end)
+
+dragArea.MouseLeave:Connect(function()
+    if not dragging then
+        TweenService:Create(dragArea.Parent, TweenInfo.new(0.2), {BackgroundTransparency = 0.1}):Play()
+    end
+end)
