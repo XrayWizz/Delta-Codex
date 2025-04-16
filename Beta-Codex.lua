@@ -82,12 +82,12 @@ local titleButton = Instance.new("TextButton")
 titleButton.Name = "TitleButton"
 titleButton.Size = UDim2.new(0, 120, 0, BUTTON_HEIGHT)  -- Initial size, will be adjusted based on text
 titleButton.Position = UDim2.new(0.5, -60, 0.5, -BUTTON_HEIGHT/2)  -- Centered
-titleButton.BackgroundColor3 = Color3.fromRGB(15, 20, 30)  -- Slightly lighter than background for subtle distinction
+titleButton.BackgroundTransparency = 1  -- Start with transparent background
 titleButton.Text = "Delta Codex"
 titleButton.TextColor3 = COLORS.onSurface
 titleButton.Font = Enum.Font.GothamBold
 titleButton.TextSize = 17
-titleButton.AutoButtonColor = false  -- We'll handle hover effects manually
+titleButton.AutoButtonColor = false
 titleButton.Parent = titleBar
 titleButton.ZIndex = 3
 
@@ -108,7 +108,7 @@ local function onTitleHover()
     TweenService:Create(titleButton, 
         TweenInfo.new(0.2, Enum.EasingStyle.Cubic), 
         {
-            BackgroundColor3 = Color3.fromRGB(25, 32, 48),
+            BackgroundTransparency = 1, -- Make background fully transparent
             TextColor3 = COLORS.primary
         }
     ):Play()
@@ -122,7 +122,7 @@ local function onTitleUnhover()
     TweenService:Create(titleButton, 
         TweenInfo.new(0.2, Enum.EasingStyle.Cubic), 
         {
-            BackgroundColor3 = Color3.fromRGB(15, 20, 30),
+            BackgroundTransparency = 1, -- Keep background fully transparent
             TextColor3 = COLORS.onSurface
         }
     ):Play()
