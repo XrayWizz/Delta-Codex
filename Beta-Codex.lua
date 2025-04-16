@@ -67,7 +67,8 @@ local titleBar = Instance.new("Frame")  -- Changed back to Frame
 titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
+titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)  -- Dark background
+titleBar.BackgroundTransparency = 0
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
@@ -213,17 +214,11 @@ local originalTitleLabelPosition = titleLabel.Position
 
 -- Add visual feedback for the click area
 local function onDown()
-    TweenService:Create(titleBar,
-        TweenInfo.new(0.1, Enum.EasingStyle.Quad),
-        {BackgroundColor3 = Color3.fromRGB(30, 39, 66)}
-    ):Play()
+    -- Remove background color change, keeping the titlebar static
 end
 
 local function onUp()
-    TweenService:Create(titleBar,
-        TweenInfo.new(0.1, Enum.EasingStyle.Quad),
-        {BackgroundColor3 = Color3.fromRGB(10, 13, 22)}
-    ):Play()
+    -- Remove background color change, keeping the titlebar static
 end
 
 titleClickArea.MouseButton1Down:Connect(onDown)
