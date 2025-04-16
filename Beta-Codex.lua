@@ -81,11 +81,11 @@ local titleCorner = Instance.new("UICorner")
 titleCorner.CornerRadius = UDim.new(0, 14)
 titleCorner.Parent = titleBar
 
--- Title Button
+-- Title Button with matching proportions
 local titleButton = Instance.new("TextButton")
 titleButton.Name = "TitleButton"
-titleButton.Size = UDim2.new(0, 120, 0, 22)
-titleButton.Position = UDim2.new(0.5, -60, 0.5, -7)
+titleButton.Size = UDim2.new(0, 160, 0, 30)  -- Match main menu button size
+titleButton.Position = UDim2.new(0.5, -80, 0.5, -15)  -- Centered
 titleButton.BackgroundTransparency = 1
 titleButton.Text = "Delta Codex"
 titleButton.TextColor3 = COLORS.onSurface
@@ -117,17 +117,17 @@ end
 titleButton.MouseEnter:Connect(onTitleHover)
 titleButton.MouseLeave:Connect(onTitleUnhover)
 
--- Close button with transparency
+-- Close button with matching size
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseButton"
-closeBtn.Size = UDim2.new(0, 50, 0, 20)
-closeBtn.Position = UDim2.new(1, -60, 0.5, -10)
+closeBtn.Size = UDim2.new(0, 80, 0, 30)  -- Half width of main buttons, same height
+closeBtn.Position = UDim2.new(1, -90, 0.5, -15)  -- Adjusted position
 closeBtn.BackgroundColor3 = COLORS.surfaceVariant
-closeBtn.BackgroundTransparency = 0.1  -- Match main UI transparency
+closeBtn.BackgroundTransparency = 0.1
 closeBtn.Text = "Close"
 closeBtn.TextColor3 = COLORS.onSurface
-closeBtn.Font = Enum.Font.GothamMedium
-closeBtn.TextSize = 14
+closeBtn.Font = Enum.Font.GothamSemibold  -- Match main menu font
+closeBtn.TextSize = 16  -- Match main menu text size
 closeBtn.AutoButtonColor = true
 closeBtn.Parent = titleBar
 closeBtn.ZIndex = 3
@@ -136,17 +136,17 @@ local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 8)
 closeCorner.Parent = closeBtn
 
--- Back button with matching transparency
+-- Back button with matching size
 local backBtn = Instance.new("TextButton")
 backBtn.Name = "BackButton"
-backBtn.Size = UDim2.new(0, 50, 0, 20)
-backBtn.Position = UDim2.new(0, 10, 0.5, -10)
+backBtn.Size = UDim2.new(0, 80, 0, 30)  -- Half width of main buttons, same height
+backBtn.Position = UDim2.new(0, 10, 0.5, -15)  -- Adjusted position
 backBtn.BackgroundColor3 = COLORS.surfaceVariant
-backBtn.BackgroundTransparency = 0.1  -- Match main UI transparency
+backBtn.BackgroundTransparency = 0.1
 backBtn.Text = "Back"
 backBtn.TextColor3 = COLORS.onSurface
-backBtn.Font = Enum.Font.GothamMedium
-backBtn.TextSize = 14
+backBtn.Font = Enum.Font.GothamSemibold  -- Match main menu font
+backBtn.TextSize = 16  -- Match main menu text size
 backBtn.AutoButtonColor = true
 backBtn.Visible = false
 backBtn.Parent = titleBar
@@ -156,11 +156,11 @@ local backCorner = Instance.new("UICorner")
 backCorner.CornerRadius = UDim.new(0, 8)
 backCorner.Parent = backBtn
 
--- Add hover effects for buttons
+-- Add hover effects for buttons (same as main menu buttons)
 local function addButtonHoverEffect(button)
     button.MouseEnter:Connect(function()
         TweenService:Create(button, 
-            TweenInfo.new(0.2, Enum.EasingStyle.Cubic), 
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad), 
             {
                 BackgroundTransparency = 0.05,
                 TextColor3 = COLORS.primary
@@ -170,7 +170,7 @@ local function addButtonHoverEffect(button)
     
     button.MouseLeave:Connect(function()
         TweenService:Create(button, 
-            TweenInfo.new(0.2, Enum.EasingStyle.Cubic), 
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad), 
             {
                 BackgroundTransparency = 0.1,
                 TextColor3 = COLORS.onSurface
