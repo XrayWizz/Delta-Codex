@@ -31,11 +31,11 @@ screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGu
 -- Check if screenGui is initialized
 if not screenGui then debugPrint("screenGui is not initialized") end
 
--- Main Frame (compact)
+-- Main Frame (more compact)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 380, 0, 320)  -- Reduced height from 400 to 320
-mainFrame.Position = UDim2.new(0.5, -190, 0.5, -160)  -- Adjusted Y position to match new height
+mainFrame.Size = UDim2.new(0, 380, 0, 290)  -- Further reduced height
+mainFrame.Position = UDim2.new(0.5, -190, 0.5, -145)  -- Adjusted Y position
 mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
 mainFrame.BorderSizePixel = 0
 mainFrame.BackgroundTransparency = 0
@@ -61,13 +61,13 @@ local EDGE_PADDING = 22  -- Padding from edges to match main menu grid
 local BUTTON_WIDTH = 80
 local BUTTON_HEIGHT = 24
 
--- Title Bar setup
-local titleBarHeight = 32
-local titleBar = Instance.new("Frame")  -- Changed back to Frame
+-- Title Bar setup with adjusted height
+local titleBarHeight = 28  -- Reduced height
+local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)  -- Dark background
+titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
 titleBar.BackgroundTransparency = 0
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
@@ -81,9 +81,9 @@ titleCorner.Parent = titleBar
 -- Title Button (Material You 3 style)
 local titleButton = Instance.new("TextButton")
 titleButton.Name = "TitleButton"
-titleButton.Size = UDim2.new(0, 120, 0, BUTTON_HEIGHT)  -- Initial size, will be adjusted based on text
-titleButton.Position = UDim2.new(0.5, -60, 0.5, -BUTTON_HEIGHT/2)  -- Centered
-titleButton.BackgroundTransparency = 1  -- Start with transparent background
+titleButton.Size = UDim2.new(0, 120, 0, 24)  -- Reduced height
+titleButton.Position = UDim2.new(0.5, -60, 0.5, -8)  -- Adjusted Y offset for lower position
+titleButton.BackgroundTransparency = 1
 titleButton.Text = "Delta Codex"
 titleButton.TextColor3 = COLORS.onSurface
 titleButton.Font = Enum.Font.GothamBold
@@ -1083,11 +1083,11 @@ local function showButtonList()
     titleLabel.Visible = false
     titleButton.Visible = true
     contentPanel.Visible = true
-    local btnW, btnH = 160, 32  -- Reduced button height from 36 to 32
-    local gapX, gapY = 16, 8    -- Reduced vertical gap from 12 to 8
+    local btnW, btnH = 160, 30  -- Reduced button height
+    local gapX, gapY = 16, 10   -- Adjusted gaps for even spacing
     local cols, rows = 2, 6
     local offsetX = 22
-    local offsetY = 8
+    local offsetY = 12          -- Increased offset from title
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
             local col = ((i-1) % cols)
