@@ -61,31 +61,26 @@ local minimizedTitleBarWidth = 120 -- Width when minimized to just show "Delta C
 local isMinimized = false
 
 -- Constants for layout
-local EDGE_PADDING = 22  -- Padding from edges to match main menu grid
-local BUTTON_WIDTH = 80
-local BUTTON_HEIGHT = 24
+local EDGE_PADDING = 22  -- Matches main menu grid padding
+local BUTTON_WIDTH = 160
+local BUTTON_HEIGHT = 30
+local TITLE_BAR_HEIGHT = 40  -- Increased for better vertical spacing
 
 -- Title Bar setup
-local titleBarHeight = 24
 local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
-titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
+titleBar.Size = UDim2.new(1, 0, 0, TITLE_BAR_HEIGHT)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundTransparency = 1  -- Make title bar background fully transparent
+titleBar.BackgroundTransparency = 1
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
 
--- Add corner radius to title bar
-local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 14)
-titleCorner.Parent = titleBar
-
--- Title Button with matching proportions
+-- Title Button with grid alignment
 local titleButton = Instance.new("TextButton")
 titleButton.Name = "TitleButton"
-titleButton.Size = UDim2.new(0, 160, 0, 30)  -- Match main menu button size
-titleButton.Position = UDim2.new(0.5, -80, 0.5, -15)  -- Centered
+titleButton.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
+titleButton.Position = UDim2.new(0.5, -BUTTON_WIDTH/2, 0.5, -BUTTON_HEIGHT/2)  -- Centered
 titleButton.BackgroundTransparency = 1
 titleButton.Text = "Delta Codex"
 titleButton.TextColor3 = COLORS.onSurface
@@ -95,39 +90,17 @@ titleButton.AutoButtonColor = false
 titleButton.Parent = titleBar
 titleButton.ZIndex = 3
 
--- Material You 3 hover effects for title button
-local function onTitleHover()
-    TweenService:Create(titleButton, 
-        TweenInfo.new(0.2, Enum.EasingStyle.Cubic), 
-        {
-            TextColor3 = COLORS.primary
-        }
-    ):Play()
-end
-
-local function onTitleUnhover()
-    TweenService:Create(titleButton, 
-        TweenInfo.new(0.2, Enum.EasingStyle.Cubic), 
-        {
-            TextColor3 = COLORS.onSurface
-        }
-    ):Play()
-end
-
-titleButton.MouseEnter:Connect(onTitleHover)
-titleButton.MouseLeave:Connect(onTitleUnhover)
-
--- Close button with matching size
+-- Close button aligned with grid
 local closeBtn = Instance.new("TextButton")
 closeBtn.Name = "CloseButton"
-closeBtn.Size = UDim2.new(0, 80, 0, 30)  -- Half width of main buttons, same height
-closeBtn.Position = UDim2.new(1, -90, 0.5, -15)  -- Adjusted position
+closeBtn.Size = UDim2.new(0, BUTTON_WIDTH/2, 0, BUTTON_HEIGHT)  -- Half width of main buttons
+closeBtn.Position = UDim2.new(1, -(EDGE_PADDING + BUTTON_WIDTH/2), 0.5, -BUTTON_HEIGHT/2)  -- Aligned with right grid
 closeBtn.BackgroundColor3 = COLORS.surfaceVariant
 closeBtn.BackgroundTransparency = 0.1
 closeBtn.Text = "Close"
 closeBtn.TextColor3 = COLORS.onSurface
-closeBtn.Font = Enum.Font.GothamSemibold  -- Match main menu font
-closeBtn.TextSize = 16  -- Match main menu text size
+closeBtn.Font = Enum.Font.GothamSemibold
+closeBtn.TextSize = 16
 closeBtn.AutoButtonColor = true
 closeBtn.Parent = titleBar
 closeBtn.ZIndex = 3
@@ -136,17 +109,17 @@ local closeCorner = Instance.new("UICorner")
 closeCorner.CornerRadius = UDim.new(0, 8)
 closeCorner.Parent = closeBtn
 
--- Back button with matching size
+-- Back button aligned with grid
 local backBtn = Instance.new("TextButton")
 backBtn.Name = "BackButton"
-backBtn.Size = UDim2.new(0, 80, 0, 30)  -- Half width of main buttons, same height
-backBtn.Position = UDim2.new(0, 10, 0.5, -15)  -- Adjusted position
+backBtn.Size = UDim2.new(0, BUTTON_WIDTH/2, 0, BUTTON_HEIGHT)  -- Half width of main buttons
+backBtn.Position = UDim2.new(0, EDGE_PADDING, 0.5, -BUTTON_HEIGHT/2)  -- Aligned with left grid
 backBtn.BackgroundColor3 = COLORS.surfaceVariant
 backBtn.BackgroundTransparency = 0.1
 backBtn.Text = "Back"
 backBtn.TextColor3 = COLORS.onSurface
-backBtn.Font = Enum.Font.GothamSemibold  -- Match main menu font
-backBtn.TextSize = 16  -- Match main menu text size
+backBtn.Font = Enum.Font.GothamSemibold
+backBtn.TextSize = 16
 backBtn.AutoButtonColor = true
 backBtn.Visible = false
 backBtn.Parent = titleBar
@@ -314,11 +287,11 @@ backBtn.MouseButton1Click:Connect(function()
     titleButton.Visible = true  -- Show the title button
 end)
 
--- Content Panel (for both button list and context screens)
+-- Content Panel adjusted for new title bar height
 local contentPanel = Instance.new("Frame")
 contentPanel.Name = "ContentPanel"
-contentPanel.Size = UDim2.new(1, 0, 1, -32)
-contentPanel.Position = UDim2.new(0, 0, 0, 32)
+contentPanel.Size = UDim2.new(1, 0, 1, -TITLE_BAR_HEIGHT)
+contentPanel.Position = UDim2.new(0, 0, 0, TITLE_BAR_HEIGHT)
 contentPanel.BackgroundTransparency = 1
 contentPanel.Parent = mainFrame
 
