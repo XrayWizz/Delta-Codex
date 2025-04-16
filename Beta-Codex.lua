@@ -10,8 +10,8 @@ local Players = game:GetService("Players")
 -- Dark & Blue color palette
 local COLORS = {
     surface = Color3.fromRGB(18, 22, 32),
-    surfaceVariant = Color3.fromRGB(27, 32, 48),
-    primary = Color3.fromRGB(36, 110, 255), -- Blue accent (customize this for your own Material You look!)
+    surfaceVariant = Color3.fromRGB(30, 35, 45),  -- Adjusted for menu buttons
+    primary = Color3.fromRGB(36, 110, 255),
     onPrimary = Color3.fromRGB(255, 255, 255),
     onSurface = Color3.fromRGB(220, 230, 255),
     outline = Color3.fromRGB(40, 65, 120),
@@ -34,15 +34,16 @@ screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGu
 -- Check if screenGui is initialized
 if not screenGui then debugPrint("screenGui is not initialized") end
 
--- Main Frame (more compact)
+-- Main Frame (compact)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 380, 0, 280)
-mainFrame.Position = UDim2.new(0.5, -190, 0.5, -170)  -- Moved down from -190 to -170
+mainFrame.Size = UDim2.new(0, 380, 0, 280)  -- Adjusted size
+mainFrame.Position = UDim2.new(0.5, -190, 0.5, -170)  -- Adjusted position
 mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
 mainFrame.BorderSizePixel = 0
 mainFrame.BackgroundTransparency = 0.1
 mainFrame.Parent = screenGui
+
 local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 14)
 mainCorner.Parent = mainFrame
@@ -64,14 +65,13 @@ local EDGE_PADDING = 22  -- Padding from edges to match main menu grid
 local BUTTON_WIDTH = 80
 local BUTTON_HEIGHT = 24
 
--- Title Bar setup with adjusted height
-local titleBarHeight = 24  -- Reduced from 28 to 24
+-- Title Bar setup
+local titleBarHeight = 24
 local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-titleBar.BackgroundTransparency = 0.1  -- Keep transparency
+titleBar.BackgroundTransparency = 1  -- Make title bar background fully transparent
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
@@ -81,11 +81,11 @@ local titleCorner = Instance.new("UICorner")
 titleCorner.CornerRadius = UDim.new(0, 14)
 titleCorner.Parent = titleBar
 
--- Title Button with adjusted position
+-- Title Button
 local titleButton = Instance.new("TextButton")
 titleButton.Name = "TitleButton"
-titleButton.Size = UDim2.new(0, 120, 0, 22)  -- Slightly reduced height
-titleButton.Position = UDim2.new(0.5, -60, 0.5, -7)  -- Adjusted for new height
+titleButton.Size = UDim2.new(0, 120, 0, 22)
+titleButton.Position = UDim2.new(0.5, -60, 0.5, -7)
 titleButton.BackgroundTransparency = 1
 titleButton.Text = "Delta Codex"
 titleButton.TextColor3 = COLORS.onSurface
@@ -117,13 +117,32 @@ end
 titleButton.MouseEnter:Connect(onTitleHover)
 titleButton.MouseLeave:Connect(onTitleUnhover)
 
--- Back button (aligned with left grid edge)
+-- Close button with transparency
+local closeBtn = Instance.new("TextButton")
+closeBtn.Name = "CloseButton"
+closeBtn.Size = UDim2.new(0, 50, 0, 20)
+closeBtn.Position = UDim2.new(1, -60, 0.5, -10)
+closeBtn.BackgroundColor3 = COLORS.surfaceVariant
+closeBtn.BackgroundTransparency = 0.1  -- Match main UI transparency
+closeBtn.Text = "Close"
+closeBtn.TextColor3 = COLORS.onSurface
+closeBtn.Font = Enum.Font.GothamMedium
+closeBtn.TextSize = 14
+closeBtn.AutoButtonColor = true
+closeBtn.Parent = titleBar
+closeBtn.ZIndex = 3
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeBtn
+
+-- Back button with matching transparency
 local backBtn = Instance.new("TextButton")
 backBtn.Name = "BackButton"
 backBtn.Size = UDim2.new(0, 50, 0, 20)
 backBtn.Position = UDim2.new(0, 10, 0.5, -10)
 backBtn.BackgroundColor3 = COLORS.surfaceVariant
-backBtn.BackgroundTransparency = 0.1  -- Keep transparency
+backBtn.BackgroundTransparency = 0.1  -- Match main UI transparency
 backBtn.Text = "Back"
 backBtn.TextColor3 = COLORS.onSurface
 backBtn.Font = Enum.Font.GothamMedium
@@ -136,25 +155,6 @@ backBtn.ZIndex = 3
 local backCorner = Instance.new("UICorner")
 backCorner.CornerRadius = UDim.new(0, 8)
 backCorner.Parent = backBtn
-
--- Close button (aligned with right grid edge)
-local closeBtn = Instance.new("TextButton")
-closeBtn.Name = "CloseButton"
-closeBtn.Size = UDim2.new(0, 50, 0, 20)
-closeBtn.Position = UDim2.new(1, -60, 0.5, -10)
-closeBtn.BackgroundColor3 = COLORS.surfaceVariant
-closeBtn.BackgroundTransparency = 0.1  -- Keep transparency
-closeBtn.Text = "Close"
-closeBtn.TextColor3 = COLORS.onSurface
-closeBtn.Font = Enum.Font.GothamMedium
-closeBtn.TextSize = 14
-closeBtn.AutoButtonColor = true
-closeBtn.Parent = titleBar
-closeBtn.ZIndex = 3
-
-local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 8)
-closeCorner.Parent = closeBtn
 
 -- Add hover effects for buttons
 local function addButtonHoverEffect(button)
@@ -1084,7 +1084,7 @@ local function showButtonList()
     local gapX, gapY = 16, 10
     local cols, rows = 2, 6
     local offsetX = 22
-    local offsetY = 8  -- Reduced from 12 to 8 to bring buttons closer to title
+    local offsetY = 8
 
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
@@ -1095,7 +1095,7 @@ local function showButtonList()
             btn.Size = UDim2.new(0, btnW, 0, btnH)
             btn.Position = UDim2.new(0, offsetX + col * (btnW + gapX), 0, offsetY + row * (btnH + gapY))
             btn.BackgroundColor3 = COLORS.surfaceVariant
-            btn.BackgroundTransparency = 0.1  -- Added slight transparency
+            btn.BackgroundTransparency = 0.1
             btn.Text = name
             btn.TextColor3 = COLORS.onSurface
             btn.Font = Enum.Font.GothamSemibold
@@ -1105,14 +1105,29 @@ local function showButtonList()
             btn.ZIndex = 2
 
             local btnCorner = Instance.new("UICorner")
-            btnCorner.CornerRadius = UDim.new(0, 12)
+            btnCorner.CornerRadius = UDim.new(0, 8)
             btnCorner.Parent = btn
 
-            local btnStroke = Instance.new("UIStroke")
-            btnStroke.Thickness = 1
-            btnStroke.Color = COLORS.outline
-            btnStroke.Transparency = 0.4
-            btnStroke.Parent = btn
+            -- Add hover effect
+            btn.MouseEnter:Connect(function()
+                TweenService:Create(btn, 
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad), 
+                    {
+                        BackgroundTransparency = 0.05,
+                        TextColor3 = COLORS.primary
+                    }
+                ):Play()
+            end)
+
+            btn.MouseLeave:Connect(function()
+                TweenService:Create(btn, 
+                    TweenInfo.new(0.2, Enum.EasingStyle.Quad), 
+                    {
+                        BackgroundTransparency = 0.1,
+                        TextColor3 = COLORS.onSurface
+                    }
+                ):Play()
+            end)
 
             btn.MouseButton1Click:Connect(function()
                 debugPrint("Button clicked")
