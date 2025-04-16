@@ -34,11 +34,11 @@ if not screenGui then debugPrint("screenGui is not initialized") end
 -- Main Frame (more compact)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 380, 0, 290)
-mainFrame.Position = UDim2.new(0.5, -190, 0.5, -175)  -- Moved up by adjusting Y offset from -145 to -175
+mainFrame.Size = UDim2.new(0, 380, 0, 280)  -- Slightly reduced total height
+mainFrame.Position = UDim2.new(0.5, -190, 0.5, -190)  -- Moved up more to center relative to health/energy bars
 mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
 mainFrame.BorderSizePixel = 0
-mainFrame.BackgroundTransparency = 0.1  -- Added slight transparency
+mainFrame.BackgroundTransparency = 0.1
 mainFrame.Parent = screenGui
 local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 14)
@@ -61,14 +61,14 @@ local EDGE_PADDING = 22  -- Padding from edges to match main menu grid
 local BUTTON_WIDTH = 80
 local BUTTON_HEIGHT = 24
 
--- Title Bar setup with adjusted height
-local titleBarHeight = 28  -- Reduced height
+-- Title Bar setup with reduced height
+local titleBarHeight = 24  -- Reduced from 28 to 24
 local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
 titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-titleBar.BackgroundTransparency = 0.1  -- Added slight transparency
+titleBar.BackgroundTransparency = 0.1
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
@@ -78,16 +78,16 @@ local titleCorner = Instance.new("UICorner")
 titleCorner.CornerRadius = UDim.new(0, 14)
 titleCorner.Parent = titleBar
 
--- Title Button (Material You 3 style)
+-- Title Button with adjusted position
 local titleButton = Instance.new("TextButton")
 titleButton.Name = "TitleButton"
-titleButton.Size = UDim2.new(0, 120, 0, 24)  -- Reduced height
-titleButton.Position = UDim2.new(0.5, -60, 0.5, -8)  -- Adjusted Y offset for lower position
+titleButton.Size = UDim2.new(0, 120, 0, 22)  -- Slightly reduced height
+titleButton.Position = UDim2.new(0.5, -60, 0.5, -7)  -- Adjusted for new height
 titleButton.BackgroundTransparency = 1
 titleButton.Text = "Delta Codex"
 titleButton.TextColor3 = COLORS.onSurface
 titleButton.Font = Enum.Font.GothamBold
-titleButton.TextSize = 17
+titleButton.TextSize = 16  -- Slightly reduced from 17
 titleButton.AutoButtonColor = false
 titleButton.Parent = titleBar
 titleButton.ZIndex = 3
@@ -1087,7 +1087,7 @@ local function showButtonList()
     local gapX, gapY = 16, 10
     local cols, rows = 2, 6
     local offsetX = 22
-    local offsetY = 12
+    local offsetY = 8  -- Reduced from 12 to 8 to bring buttons closer to title
 
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
