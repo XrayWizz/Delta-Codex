@@ -34,9 +34,9 @@ if not screenGui then debugPrint("screenGui is not initialized") end
 -- Main Frame (compact)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 380, 0, 400)
-mainFrame.Position = UDim2.new(0.5, -190, 0.5, -200)  -- Centered
-mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22) -- much darker
+mainFrame.Size = UDim2.new(0, 380, 0, 320)  -- Reduced height from 400 to 320
+mainFrame.Position = UDim2.new(0.5, -190, 0.5, -160)  -- Adjusted Y position to match new height
+mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
 mainFrame.BorderSizePixel = 0
 mainFrame.BackgroundTransparency = 0
 mainFrame.Parent = screenGui
@@ -546,6 +546,8 @@ local function buildOverviewPanel(parent)
     scrollFrame.ScrollBarImageColor3 = COLORS.primary
     scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
     scrollFrame.ScrollBarImageTransparency = 0.5
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)  -- Auto-adjust canvas size
+    scrollFrame.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y  -- Enable automatic canvas sizing
     scrollFrame.Parent = parent
 
     -- Add smooth scrolling behavior
@@ -1078,11 +1080,11 @@ local function showButtonList()
     debugPrint("showButtonList called")
     clearContent()
     backBtn.Visible = false
-    titleLabel.Visible = false  -- Hide the title label
-    titleButton.Visible = true  -- Show the title button
+    titleLabel.Visible = false
+    titleButton.Visible = true
     contentPanel.Visible = true
-    local btnW, btnH = 160, 36
-    local gapX, gapY = 16, 12
+    local btnW, btnH = 160, 32  -- Reduced button height from 36 to 32
+    local gapX, gapY = 16, 8    -- Reduced vertical gap from 12 to 8
     local cols, rows = 2, 6
     local offsetX = 22
     local offsetY = 8
