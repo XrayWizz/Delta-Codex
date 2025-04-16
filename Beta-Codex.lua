@@ -35,12 +35,12 @@ screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGu
 if not screenGui then debugPrint("screenGui is not initialized") end
 
 -- Constants for layout (matching main menu exactly)
-local EDGE_PADDING = 22
+local EDGE_PADDING = 24  -- Increased from 22 to 24 for better edge spacing
 local BUTTON_WIDTH = 160
 local BUTTON_HEIGHT = 30
-local GAP_X = 16  -- Horizontal gap between buttons
-local GAP_Y = 10  -- Vertical gap between buttons
-local TITLE_BAR_HEIGHT = 42  -- Reduced from 50 to 42 for less padding
+local GAP_X = 20  -- Increased from 16 to 20 for better horizontal spacing
+local GAP_Y = 14  -- Increased from 10 to 14 for better vertical spacing
+local TITLE_BAR_HEIGHT = 42
 
 -- Content Panel offset from title bar
 local CONTENT_OFFSET = 6  -- Small offset between title bar and content
@@ -1035,7 +1035,7 @@ local function showButtonList()
     contentPanel.Visible = true
     
     local cols, rows = 2, 6
-    local offsetY = 4  -- Reduced from 8 to 4 for tighter spacing with title bar
+    local offsetY = 8  -- Increased from 4 to 8 for better initial spacing
 
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
