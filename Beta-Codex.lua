@@ -40,7 +40,10 @@ local BUTTON_WIDTH = 160
 local BUTTON_HEIGHT = 30
 local GAP_X = 16  -- Horizontal gap between buttons
 local GAP_Y = 10  -- Vertical gap between buttons
-local TITLE_BAR_HEIGHT = 50  -- Increased for better spacing
+local TITLE_BAR_HEIGHT = 42  -- Reduced from 50 to 42 for less padding
+
+-- Content Panel offset from title bar
+local CONTENT_OFFSET = 6  -- Small offset between title bar and content
 
 -- Main Frame (compact)
 local mainFrame = Instance.new("Frame")
@@ -267,7 +270,7 @@ end)
 -- Content Panel with adjusted spacing
 local contentPanel = Instance.new("Frame")
 contentPanel.Name = "ContentPanel"
-contentPanel.Size = UDim2.new(1, 0, 1, -TITLE_BAR_HEIGHT)
+contentPanel.Size = UDim2.new(1, 0, 1, -(TITLE_BAR_HEIGHT + CONTENT_OFFSET))
 contentPanel.Position = UDim2.new(0, 0, 0, TITLE_BAR_HEIGHT)
 contentPanel.BackgroundTransparency = 1
 contentPanel.Parent = mainFrame
@@ -1022,7 +1025,7 @@ local panelBuilders = {
     end,
 }
 
--- Button list function with exact grid alignment
+-- Button list function with adjusted initial offset
 local function showButtonList()
     debugPrint("showButtonList called")
     clearContent()
@@ -1032,7 +1035,7 @@ local function showButtonList()
     contentPanel.Visible = true
     
     local cols, rows = 2, 6
-    local offsetY = 8  -- Initial offset from top
+    local offsetY = 4  -- Reduced from 8 to 4 for tighter spacing with title bar
 
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
@@ -1041,7 +1044,6 @@ local function showButtonList()
             local btn = Instance.new("TextButton")
             btn.Name = name .. "Button"
             btn.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-            -- Exact grid positioning
             btn.Position = UDim2.new(0, EDGE_PADDING + col * (BUTTON_WIDTH + GAP_X), 
                                    0, offsetY + row * (BUTTON_HEIGHT + GAP_Y))
             btn.BackgroundColor3 = COLORS.surfaceVariant
