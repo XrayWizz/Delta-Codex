@@ -315,9 +315,11 @@ closeBtn.MouseButton1Click:Connect(function()
 end)
 
 backBtn.MouseButton1Click:Connect(function()
+    debugPrint("Back button clicked")
     showButtonList()
     backBtn.Visible = false
-    titleLabel.Text = "Delta Codex"
+    titleLabel.Visible = false  -- Hide the title label
+    titleButton.Visible = true  -- Show the title button
 end)
 
 -- Content Panel (for both button list and context screens)
@@ -1081,13 +1083,14 @@ local function showButtonList()
     debugPrint("showButtonList called")
     clearContent()
     backBtn.Visible = false
-    titleLabel.Text = "Delta Codex"
+    titleLabel.Visible = false  -- Hide the title label
+    titleButton.Visible = true  -- Show the title button
     contentPanel.Visible = true
     local btnW, btnH = 160, 36
     local gapX, gapY = 16, 12
     local cols, rows = 2, 6
     local offsetX = 22
-    local offsetY = 8 -- reduce gap between title bar and main menu buttons
+    local offsetY = 8
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
             local col = ((i-1) % cols)
@@ -1120,6 +1123,8 @@ local function showButtonList()
                 contentPanel.Visible = false
                 backBtn.Visible = true
                 titleLabel.Text = name
+                titleLabel.Visible = true  -- Show the title label
+                titleButton.Visible = false  -- Hide the title button
                 if panelBuilders[name] then
                     clearContent()
                     panelBuilders[name](contentPanel)
@@ -1138,7 +1143,8 @@ backBtn.MouseButton1Click:Connect(function()
     debugPrint("Back button clicked")
     showButtonList()
     backBtn.Visible = false
-    titleLabel.Text = "Delta Codex"  -- Reset title to 'Delta Codex'
+    titleLabel.Visible = false  -- Hide the title label
+    titleButton.Visible = true  -- Show the title button
 end)
 
 -- Ensure Close button always works
