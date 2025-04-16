@@ -34,11 +34,11 @@ if not screenGui then debugPrint("screenGui is not initialized") end
 -- Main Frame (more compact)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 380, 0, 290)  -- Further reduced height
-mainFrame.Position = UDim2.new(0.5, -190, 0.5, -145)  -- Adjusted Y position
+mainFrame.Size = UDim2.new(0, 380, 0, 290)
+mainFrame.Position = UDim2.new(0.5, -190, 0.5, -175)  -- Moved up by adjusting Y offset from -145 to -175
 mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
 mainFrame.BorderSizePixel = 0
-mainFrame.BackgroundTransparency = 0
+mainFrame.BackgroundTransparency = 0.1  -- Added slight transparency
 mainFrame.Parent = screenGui
 local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 14)
@@ -68,7 +68,7 @@ titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
 titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-titleBar.BackgroundTransparency = 0
+titleBar.BackgroundTransparency = 0.1  -- Added slight transparency
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
@@ -443,7 +443,7 @@ local function createInfoCard(parent, label, value, showProgress)
     local card = Instance.new("Frame")
     card.Size = UDim2.new(1, 0, 0, showProgress and 64 or 48)
     card.BackgroundColor3 = COLORS.surfaceVariant
-    card.BackgroundTransparency = 0.1
+    card.BackgroundTransparency = 0.1  -- Added slight transparency
     card.Parent = parent
 
     local corner = Instance.new("UICorner")
@@ -462,24 +462,24 @@ local function createInfoCard(parent, label, value, showProgress)
     shadow.Size = UDim2.new(1, 8, 1, 8)
     shadow.Position = UDim2.new(0, -4, 0, -2)
     shadow.BackgroundTransparency = 1
-    shadow.Image = "rbxassetid://1316045217" -- soft shadow asset
-    shadow.ImageTransparency = 0.85
+    shadow.Image = "rbxassetid://1316045217"
+    shadow.ImageTransparency = 0.9  -- Increased shadow transparency
     shadow.ZIndex = 0
     shadow.Parent = card
 
     -- Hover effect
     local function onHover()
         debugPrint("onHover called")
-        createTween(card, {BackgroundTransparency = 0}, 0.2):Play()
+        createTween(card, {BackgroundTransparency = 0.05}, 0.2):Play()
         createTween(stroke, {Transparency = 0.2}, 0.2):Play()
-        createTween(shadow, {ImageTransparency = 0.7}, 0.2):Play()
+        createTween(shadow, {ImageTransparency = 0.85}, 0.2):Play()
     end
 
     local function onUnhover()
         debugPrint("onUnhover called")
         createTween(card, {BackgroundTransparency = 0.1}, 0.2):Play()
         createTween(stroke, {Transparency = 0.4}, 0.2):Play()
-        createTween(shadow, {ImageTransparency = 0.85}, 0.2):Play()
+        createTween(shadow, {ImageTransparency = 0.9}, 0.2):Play()
     end
 
     card.MouseEnter:Connect(onHover)
@@ -1083,11 +1083,12 @@ local function showButtonList()
     titleLabel.Visible = false
     titleButton.Visible = true
     contentPanel.Visible = true
-    local btnW, btnH = 160, 30  -- Reduced button height
-    local gapX, gapY = 16, 10   -- Adjusted gaps for even spacing
+    local btnW, btnH = 160, 30
+    local gapX, gapY = 16, 10
     local cols, rows = 2, 6
     local offsetX = 22
-    local offsetY = 12          -- Increased offset from title
+    local offsetY = 12
+
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
             local col = ((i-1) % cols)
@@ -1097,6 +1098,7 @@ local function showButtonList()
             btn.Size = UDim2.new(0, btnW, 0, btnH)
             btn.Position = UDim2.new(0, offsetX + col * (btnW + gapX), 0, offsetY + row * (btnH + gapY))
             btn.BackgroundColor3 = COLORS.surfaceVariant
+            btn.BackgroundTransparency = 0.1  -- Added slight transparency
             btn.Text = name
             btn.TextColor3 = COLORS.onSurface
             btn.Font = Enum.Font.GothamSemibold
