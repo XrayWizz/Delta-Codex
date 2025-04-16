@@ -34,14 +34,22 @@ screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGu
 -- Check if screenGui is initialized
 if not screenGui then debugPrint("screenGui is not initialized") end
 
+-- Constants for layout (matching main menu exactly)
+local EDGE_PADDING = 22
+local BUTTON_WIDTH = 160
+local BUTTON_HEIGHT = 30
+local GAP_X = 16  -- Horizontal gap between buttons
+local GAP_Y = 10  -- Vertical gap between buttons
+local TITLE_BAR_HEIGHT = 50  -- Increased for better spacing
+
 -- Main Frame (compact)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 380, 0, 280)  -- Adjusted size
-mainFrame.Position = UDim2.new(0.5, -190, 0.5, -170)  -- Adjusted position
+mainFrame.Size = UDim2.new(0, 380, 0, 280)
+mainFrame.Position = UDim2.new(0.5, -190, 0.5, -170)
 mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-mainFrame.BorderSizePixel = 0
 mainFrame.BackgroundTransparency = 0.1
+mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
 local mainCorner = Instance.new("UICorner")
@@ -60,12 +68,6 @@ local originalMainFramePosition = mainFrame.Position
 local minimizedTitleBarWidth = 120 -- Width when minimized to just show "Delta Codex"
 local isMinimized = false
 
--- Constants for layout
-local EDGE_PADDING = 22  -- Matches main menu grid padding
-local BUTTON_WIDTH = 160
-local BUTTON_HEIGHT = 30
-local TITLE_BAR_HEIGHT = 40  -- Increased for better vertical spacing
-
 -- Title Bar setup
 local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
@@ -76,11 +78,11 @@ titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
 
--- Title Button with grid alignment
+-- Title Button (centered)
 local titleButton = Instance.new("TextButton")
 titleButton.Name = "TitleButton"
 titleButton.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-titleButton.Position = UDim2.new(0.5, -BUTTON_WIDTH/2, 0.5, -BUTTON_HEIGHT/2)  -- Centered
+titleButton.Position = UDim2.new(0.5, -BUTTON_WIDTH/2, 0.5, -BUTTON_HEIGHT/2)
 titleButton.BackgroundTransparency = 1
 titleButton.Text = "Delta Codex"
 titleButton.TextColor3 = COLORS.onSurface
@@ -90,30 +92,11 @@ titleButton.AutoButtonColor = false
 titleButton.Parent = titleBar
 titleButton.ZIndex = 3
 
--- Close button aligned with grid
-local closeBtn = Instance.new("TextButton")
-closeBtn.Name = "CloseButton"
-closeBtn.Size = UDim2.new(0, BUTTON_WIDTH/2, 0, BUTTON_HEIGHT)  -- Half width of main buttons
-closeBtn.Position = UDim2.new(1, -(EDGE_PADDING + BUTTON_WIDTH/2), 0.5, -BUTTON_HEIGHT/2)  -- Aligned with right grid
-closeBtn.BackgroundColor3 = COLORS.surfaceVariant
-closeBtn.BackgroundTransparency = 0.1
-closeBtn.Text = "Close"
-closeBtn.TextColor3 = COLORS.onSurface
-closeBtn.Font = Enum.Font.GothamSemibold
-closeBtn.TextSize = 16
-closeBtn.AutoButtonColor = true
-closeBtn.Parent = titleBar
-closeBtn.ZIndex = 3
-
-local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 8)
-closeCorner.Parent = closeBtn
-
--- Back button aligned with grid
+-- Back button (left grid alignment)
 local backBtn = Instance.new("TextButton")
 backBtn.Name = "BackButton"
-backBtn.Size = UDim2.new(0, BUTTON_WIDTH/2, 0, BUTTON_HEIGHT)  -- Half width of main buttons
-backBtn.Position = UDim2.new(0, EDGE_PADDING, 0.5, -BUTTON_HEIGHT/2)  -- Aligned with left grid
+backBtn.Size = UDim2.new(0, BUTTON_WIDTH/2, 0, BUTTON_HEIGHT)
+backBtn.Position = UDim2.new(0, EDGE_PADDING, 0.5, -BUTTON_HEIGHT/2)
 backBtn.BackgroundColor3 = COLORS.surfaceVariant
 backBtn.BackgroundTransparency = 0.1
 backBtn.Text = "Back"
@@ -129,31 +112,25 @@ local backCorner = Instance.new("UICorner")
 backCorner.CornerRadius = UDim.new(0, 8)
 backCorner.Parent = backBtn
 
--- Add hover effects for buttons (same as main menu buttons)
-local function addButtonHoverEffect(button)
-    button.MouseEnter:Connect(function()
-        TweenService:Create(button, 
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad), 
-            {
-                BackgroundTransparency = 0.05,
-                TextColor3 = COLORS.primary
-            }
-        ):Play()
-    end)
-    
-    button.MouseLeave:Connect(function()
-        TweenService:Create(button, 
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad), 
-            {
-                BackgroundTransparency = 0.1,
-                TextColor3 = COLORS.onSurface
-            }
-        ):Play()
-    end)
-end
+-- Close button (right grid alignment)
+local closeBtn = Instance.new("TextButton")
+closeBtn.Name = "CloseButton"
+closeBtn.Size = UDim2.new(0, BUTTON_WIDTH/2, 0, BUTTON_HEIGHT)
+-- Align with the right edge of the rightmost main menu button
+closeBtn.Position = UDim2.new(0, mainFrame.Size.X.Offset - EDGE_PADDING - BUTTON_WIDTH/2, 0.5, -BUTTON_HEIGHT/2)
+closeBtn.BackgroundColor3 = COLORS.surfaceVariant
+closeBtn.BackgroundTransparency = 0.1
+closeBtn.Text = "Close"
+closeBtn.TextColor3 = COLORS.onSurface
+closeBtn.Font = Enum.Font.GothamSemibold
+closeBtn.TextSize = 16
+closeBtn.AutoButtonColor = true
+closeBtn.Parent = titleBar
+closeBtn.ZIndex = 3
 
-addButtonHoverEffect(closeBtn)
-addButtonHoverEffect(backBtn)
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeBtn
 
 -- Create a clickable area in the center of title bar (avoiding buttons)
 local titleClickArea = Instance.new("TextButton")
@@ -287,7 +264,7 @@ backBtn.MouseButton1Click:Connect(function()
     titleButton.Visible = true  -- Show the title button
 end)
 
--- Content Panel adjusted for new title bar height
+-- Content Panel with adjusted spacing
 local contentPanel = Instance.new("Frame")
 contentPanel.Name = "ContentPanel"
 contentPanel.Size = UDim2.new(1, 0, 1, -TITLE_BAR_HEIGHT)
@@ -1045,7 +1022,7 @@ local panelBuilders = {
     end,
 }
 
--- Debug print for showButtonList function
+-- Button list function with exact grid alignment
 local function showButtonList()
     debugPrint("showButtonList called")
     clearContent()
@@ -1053,11 +1030,9 @@ local function showButtonList()
     titleLabel.Visible = false
     titleButton.Visible = true
     contentPanel.Visible = true
-    local btnW, btnH = 160, 30
-    local gapX, gapY = 16, 10
+    
     local cols, rows = 2, 6
-    local offsetX = 22
-    local offsetY = 8
+    local offsetY = 8  -- Initial offset from top
 
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
@@ -1065,8 +1040,10 @@ local function showButtonList()
             local row = math.floor((i-1) / cols)
             local btn = Instance.new("TextButton")
             btn.Name = name .. "Button"
-            btn.Size = UDim2.new(0, btnW, 0, btnH)
-            btn.Position = UDim2.new(0, offsetX + col * (btnW + gapX), 0, offsetY + row * (btnH + gapY))
+            btn.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
+            -- Exact grid positioning
+            btn.Position = UDim2.new(0, EDGE_PADDING + col * (BUTTON_WIDTH + GAP_X), 
+                                   0, offsetY + row * (BUTTON_HEIGHT + GAP_Y))
             btn.BackgroundColor3 = COLORS.surfaceVariant
             btn.BackgroundTransparency = 0.1
             btn.Text = name
@@ -1081,7 +1058,7 @@ local function showButtonList()
             btnCorner.CornerRadius = UDim.new(0, 8)
             btnCorner.Parent = btn
 
-            -- Add hover effect
+            -- Add hover effects
             btn.MouseEnter:Connect(function()
                 TweenService:Create(btn, 
                     TweenInfo.new(0.2, Enum.EasingStyle.Quad), 
