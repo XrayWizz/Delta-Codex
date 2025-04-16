@@ -64,61 +64,65 @@ local EDGE_PADDING = 22  -- Padding from edges to match main menu grid
 local BUTTON_WIDTH = 80
 local BUTTON_HEIGHT = 24
 
--- Title Bar setup with reduced height
-local titleBarHeight = 24  -- Reduced from 28 to 24
+-- Title Bar setup with reduced height and better integration
+local titleBarHeight = 22  -- Even more compact
 local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
+titleBar.BackgroundColor3 = Color3.fromRGB(27, 32, 48)  -- Slightly lighter than main background for subtle depth
 titleBar.BackgroundTransparency = 0.1
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
 
--- Add corner radius to title bar
-local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 14)
-titleCorner.Parent = titleBar
+-- Add subtle gradient to title bar
+local titleGradient = Instance.new("UIGradient")
+titleGradient.Transparency = NumberSequence.new({
+    NumberSequenceKeypoint.new(0, 0),
+    NumberSequenceKeypoint.new(1, 0.1)
+})
+titleGradient.Rotation = 90
+titleGradient.Parent = titleBar
 
--- Title Button with adjusted position
+-- Title Button with updated styling
 local titleButton = Instance.new("TextButton")
 titleButton.Name = "TitleButton"
-titleButton.Size = UDim2.new(0, 120, 0, 22)  -- Slightly reduced height
-titleButton.Position = UDim2.new(0.5, -60, 0.5, -7)  -- Adjusted for new height
+titleButton.Size = UDim2.new(0, 120, 0, 20)  -- Slightly smaller
+titleButton.Position = UDim2.new(0.5, -60, 0.5, -10)
 titleButton.BackgroundTransparency = 1
 titleButton.Text = "Delta Codex"
 titleButton.TextColor3 = COLORS.onSurface
 titleButton.Font = Enum.Font.GothamBold
-titleButton.TextSize = 16  -- Slightly reduced from 17
+titleButton.TextSize = 15  -- Slightly smaller text
 titleButton.AutoButtonColor = false
 titleButton.Parent = titleBar
 titleButton.ZIndex = 3
 
--- Add corner radius to title button
-local titleBtnCorner = Instance.new("UICorner")
-titleBtnCorner.CornerRadius = UDim.new(0, 10)
-titleBtnCorner.Parent = titleButton
+-- Add subtle text shadow for depth
+local textShadow = Instance.new("TextLabel")
+textShadow.Size = titleButton.Size
+textShadow.Position = UDim2.new(0, 1, 0, 1)
+textShadow.BackgroundTransparency = 1
+textShadow.Text = titleButton.Text
+textShadow.TextColor3 = Color3.fromRGB(0, 0, 0)
+textShadow.TextTransparency = 0.8
+textShadow.Font = titleButton.Font
+textShadow.TextSize = titleButton.TextSize
+textShadow.Parent = titleButton
+textShadow.ZIndex = 2
 
--- Add subtle stroke to title button
-local titleBtnStroke = Instance.new("UIStroke")
-titleBtnStroke.Thickness = 1
-titleBtnStroke.Color = COLORS.outline
-titleBtnStroke.Transparency = 0.8  -- Very subtle stroke
-titleBtnStroke.Parent = titleButton
-
--- Material You 3 hover effects for title button
+-- Update hover effects for better Material You 3 feel
 local function onTitleHover()
     TweenService:Create(titleButton, 
         TweenInfo.new(0.2, Enum.EasingStyle.Cubic), 
         {
-            BackgroundTransparency = 1, -- Make background fully transparent
             TextColor3 = COLORS.primary
         }
     ):Play()
-    TweenService:Create(titleBtnStroke,
+    TweenService:Create(textShadow,
         TweenInfo.new(0.2, Enum.EasingStyle.Cubic),
-        {Transparency = 0.6}
+        {TextTransparency = 0.7}
     ):Play()
 end
 
@@ -126,67 +130,82 @@ local function onTitleUnhover()
     TweenService:Create(titleButton, 
         TweenInfo.new(0.2, Enum.EasingStyle.Cubic), 
         {
-            BackgroundTransparency = 1, -- Keep background fully transparent
             TextColor3 = COLORS.onSurface
         }
     ):Play()
-    TweenService:Create(titleBtnStroke,
+    TweenService:Create(textShadow,
         TweenInfo.new(0.2, Enum.EasingStyle.Cubic),
-        {Transparency = 0.8}
+        {TextTransparency = 0.8}
     ):Play()
 end
 
 titleButton.MouseEnter:Connect(onTitleHover)
 titleButton.MouseLeave:Connect(onTitleUnhover)
 
--- Adjust title button width based on text
-local textService = game:GetService("TextService")
-local textSize = textService:GetTextSize(
-    titleButton.Text,
-    titleButton.TextSize,
-    titleButton.Font,
-    Vector2.new(1000, BUTTON_HEIGHT)
-)
-local padding = 32  -- Padding for text (16px on each side)
-titleButton.Size = UDim2.new(0, textSize.X + padding, 0, BUTTON_HEIGHT)
-titleButton.Position = UDim2.new(0.5, -(textSize.X + padding)/2, 0.5, -BUTTON_HEIGHT/2)
+-- Close button with updated styling
+local closeBtn = Instance.new("TextButton")
+closeBtn.Name = "CloseButton"
+closeBtn.Size = UDim2.new(0, 50, 0, 20)  -- Smaller, more compact
+closeBtn.Position = UDim2.new(1, -60, 0.5, -10)
+closeBtn.BackgroundColor3 = COLORS.surfaceVariant
+closeBtn.BackgroundTransparency = 0.9
+closeBtn.Text = "Close"
+closeBtn.TextColor3 = COLORS.onSurface
+closeBtn.Font = Enum.Font.GothamMedium
+closeBtn.TextSize = 14
+closeBtn.AutoButtonColor = true
+closeBtn.Parent = titleBar
+closeBtn.ZIndex = 3
 
--- Back button (aligned with left grid edge)
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 8)
+closeCorner.Parent = closeBtn
+
+-- Back button with matching style
 local backBtn = Instance.new("TextButton")
 backBtn.Name = "BackButton"
-backBtn.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-backBtn.Position = UDim2.new(0, EDGE_PADDING, 0.5, -BUTTON_HEIGHT/2)  -- Aligned with left grid edge
+backBtn.Size = UDim2.new(0, 50, 0, 20)  -- Matching close button size
+backBtn.Position = UDim2.new(0, 10, 0.5, -10)
 backBtn.BackgroundColor3 = COLORS.surfaceVariant
+backBtn.BackgroundTransparency = 0.9
 backBtn.Text = "Back"
 backBtn.TextColor3 = COLORS.onSurface
-backBtn.Font = Enum.Font.GothamSemibold
-backBtn.TextSize = 15
+backBtn.Font = Enum.Font.GothamMedium
+backBtn.TextSize = 14
 backBtn.AutoButtonColor = true
 backBtn.Visible = false
 backBtn.Parent = titleBar
-backBtn.ZIndex = 4
+backBtn.ZIndex = 3
 
 local backCorner = Instance.new("UICorner")
-backCorner.CornerRadius = UDim.new(0, 10)
+backCorner.CornerRadius = UDim.new(0, 8)
 backCorner.Parent = backBtn
 
--- Close button (aligned with right grid edge)
-local closeBtn = Instance.new("TextButton")
-closeBtn.Name = "CloseButton"
-closeBtn.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-closeBtn.Position = UDim2.new(1, -(EDGE_PADDING + BUTTON_WIDTH), 0.5, -BUTTON_HEIGHT/2)  -- Aligned with right grid edge
-closeBtn.BackgroundColor3 = COLORS.surfaceVariant
-closeBtn.Text = "Close"
-closeBtn.TextColor3 = COLORS.onSurface
-closeBtn.Font = Enum.Font.GothamSemibold
-closeBtn.TextSize = 15
-closeBtn.AutoButtonColor = true
-closeBtn.Parent = titleBar
-closeBtn.ZIndex = 4
+-- Add hover effects for buttons
+local function addButtonHoverEffect(button)
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, 
+            TweenInfo.new(0.2, Enum.EasingStyle.Cubic), 
+            {
+                BackgroundTransparency = 0.8,
+                TextColor3 = COLORS.primary
+            }
+        ):Play()
+    end)
+    
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, 
+            TweenInfo.new(0.2, Enum.EasingStyle.Cubic), 
+            {
+                BackgroundTransparency = 0.9,
+                TextColor3 = COLORS.onSurface
+            }
+        ):Play()
+    end)
+end
 
-local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 10)
-closeCorner.Parent = closeBtn
+addButtonHoverEffect(closeBtn)
+addButtonHoverEffect(backBtn)
 
 -- Create a clickable area in the center of title bar (avoiding buttons)
 local titleClickArea = Instance.new("TextButton")
