@@ -49,12 +49,11 @@ mainStroke.Transparency = 0.7 -- More transparent
 mainStroke.Parent = mainFrame
 
 -- Title Bar (adjusted for new dimensions)
-local titleBarHeight = 40 -- Increased height slightly
+local titleBarHeight = 40
 local titleBtnW = 160 -- Match main menu button width
 local titleBtnH = 24
 local titleBtnOffset = 22 -- Match main menu grid offset
 local gapX = 16
-local offsetX = 22
 
 -- Title Bar
 local titleBar = Instance.new("Frame")
@@ -62,33 +61,10 @@ titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
 titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-titleBar.BackgroundTransparency = 1 -- Fully transparent
+titleBar.BackgroundTransparency = 1
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
-
--- Title Label with adjusted Y position
-titleLabel = Instance.new("TextLabel")
-titleLabel.Name = "TitleLabel"
-titleLabel.Size = UDim2.new(1, 0, 1, 0)
-titleLabel.Position = UDim2.new(0, 0, 0, 0)
-titleLabel.BackgroundTransparency = 1
-titleLabel.Text = "Delta Codex"
-titleLabel.TextColor3 = Color3.fromRGB(220, 225, 235)
-titleLabel.Font = Enum.Font.GothamBold
-titleLabel.TextSize = 17
-titleLabel.TextXAlignment = Enum.TextXAlignment.Center
-titleLabel.TextYAlignment = Enum.TextYAlignment.Top -- Align to top
-titleLabel.Parent = titleBar
-titleLabel.ZIndex = 3
-
--- Add padding to move text down
-local textPadding = Instance.new("UIPadding")
-textPadding.PaddingTop = UDim.new(0, 12) -- Adjust this value to match the image
-textPadding.Parent = titleLabel
-
--- Check if titleLabel is initialized
-if not titleLabel then debugPrint("titleLabel is not initialized") end
 
 -- Function to create styled button (for title bar buttons)
 local function createStyledButton(name, parent, size, position)
@@ -159,8 +135,77 @@ local function createStyledButton(name, parent, size, position)
     return btn
 end
 
--- Create title bar buttons with adjusted width and positions
-local minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
+-- Create title button background (using same style as menu buttons)
+local titleBtnBg = Instance.new("Frame")
+titleBtnBg.Name = "TitleButtonBg"
+titleBtnBg.Size = UDim2.new(0, titleBtnW, 0, titleBtnH)
+titleBtnBg.Position = UDim2.new(0.5, -titleBtnW/2, 0, 8) -- Center horizontally
+titleBtnBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+titleBtnBg.BackgroundTransparency = 0.1
+titleBtnBg.Parent = titleBar
+titleBtnBg.ZIndex = 2
+
+-- Add gradient to title button background
+local titleGradient = Instance.new("UIGradient")
+titleGradient.Transparency = NumberSequence.new({
+    NumberSequenceKeypoint.new(0, 0),
+    NumberSequenceKeypoint.new(0.5, 0.1),
+    NumberSequenceKeypoint.new(1, 0.3)
+})
+titleGradient.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 24, 35)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(15, 18, 26)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 12, 18))
+})
+titleGradient.Rotation = 45
+titleGradient.Parent = titleBtnBg
+
+-- Corner for title button background
+local titleBtnCorner = Instance.new("UICorner")
+titleBtnCorner.CornerRadius = UDim.new(0, 12)
+titleBtnCorner.Parent = titleBtnBg
+
+-- Stroke for title button background
+local titleBtnStroke = Instance.new("UIStroke")
+titleBtnStroke.Thickness = 1
+titleBtnStroke.Color = Color3.fromRGB(20, 24, 35)
+titleBtnStroke.Transparency = 0.7
+titleBtnStroke.Parent = titleBtnBg
+
+-- Create title button
+titleButton = Instance.new("TextButton")
+titleButton.Name = "TitleButton"
+titleButton.Size = UDim2.new(1, 0, 1, 0)
+titleButton.Position = UDim2.new(0, 0, 0, 0)
+titleButton.BackgroundTransparency = 1
+titleButton.Text = "Delta Codex"
+titleButton.TextColor3 = Color3.fromRGB(220, 225, 235)
+titleButton.Font = Enum.Font.GothamBold
+titleButton.TextSize = 16
+titleButton.ZIndex = 3
+titleButton.Parent = titleBtnBg
+
+-- Add hover effects to title button
+titleButton.MouseEnter:Connect(function()
+    titleGradient.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0),
+        NumberSequenceKeypoint.new(0.5, 0.05),
+        NumberSequenceKeypoint.new(1, 0.2)
+    })
+    titleBtnStroke.Transparency = 0.5
+end)
+
+titleButton.MouseLeave:Connect(function()
+    titleGradient.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0),
+        NumberSequenceKeypoint.new(0.5, 0.1),
+        NumberSequenceKeypoint.new(1, 0.3)
+    })
+    titleBtnStroke.Transparency = 0.7
+end)
+
+-- Create minimize and back buttons with adjusted positions
+minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
 minimizeBtn.Visible = true
 
 backBtn = createStyledButton("Back", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
@@ -930,7 +975,7 @@ local function showButtonList()
     clearContent()
     backBtn.Visible = false
     minimizeBtn.Visible = true
-    titleLabel.Text = "Delta Codex"
+    titleButton.Text = "Delta Codex"
     contentPanel.Visible = true
     local btnW, btnH = 160, 36
     local gapX, gapY = 16, 8
@@ -1017,7 +1062,7 @@ local function showButtonList()
                 contentPanel.Visible = false
                 backBtn.Visible = true
                 minimizeBtn.Visible = false
-                titleLabel.Text = name
+                titleButton.Text = name
                 if panelBuilders[name] then
                     clearContent()
                     panelBuilders[name](contentPanel)
@@ -1037,7 +1082,7 @@ backBtn.MouseButton1Click:Connect(function()
     showButtonList()
     backBtn.Visible = false
     minimizeBtn.Visible = true
-    titleLabel.Text = "Delta Codex"
+    titleButton.Text = "Delta Codex"
 end)
 
 -- Ensure Close button always works
@@ -1049,3 +1094,9 @@ if closeBtn then
 else
     debugPrint("closeBtn is not initialized")
 end
+
+-- Add click handler for title button
+titleButton.MouseButton1Click:Connect(function()
+    debugPrint("Title button clicked")
+    showButtonList()
+end)
