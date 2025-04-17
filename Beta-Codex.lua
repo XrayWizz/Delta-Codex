@@ -48,7 +48,7 @@ mainStroke.Color = Color3.fromRGB(20, 24, 35) -- Darker, less blue outline
 mainStroke.Transparency = 0.7 -- More transparent
 mainStroke.Parent = mainFrame
 
--- Title Bar (adjusted for new dimensions)
+-- Title Bar configuration
 local titleBarHeight = 36 -- Slightly reduced height
 local minButtonWidth = 80
 local titleBtnH = 24
@@ -72,7 +72,7 @@ titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
 
--- Function to create styled button (for title bar buttons)
+-- Function to create styled button
 local function createStyledButton(name, parent, size, position)
     local btnBg = Instance.new("Frame")
     btnBg.Name = name .. "ButtonBg"
@@ -169,125 +169,92 @@ local function createStyledButton(name, parent, size, position)
         updateHighlight(1) -- Hide highlight when released
     end)
 
+    return btn, btnBg
+end
+
+-- Create title button
+local titleBtnW = calculateButtonWidth("Delta Codex")
+local titleButton, titleBtnBg = createStyledButton("Title", titleBar, 
+    UDim2.new(0, titleBtnW, 0, titleBtnH), 
+    UDim2.new(0.5, -titleBtnW/2, 0, topPadding))
+titleButton.Text = "Delta Codex"
+
+-- Variables to store current buttons
+local currentLeftButton = nil
+local currentLeftButtonBg = nil
+
+-- Function to create/switch title bar button
+local function switchTitleBarButton(buttonType)
+    -- Clean up existing button
+    if currentLeftButtonBg then
+        currentLeftButtonBg:Destroy()
+        currentLeftButton = nil
+        currentLeftButtonBg = nil
+    end
+
+    -- Create new button
+    local btnWidth = calculateButtonWidth(buttonType)
+    local btn, btnBg = createStyledButton(buttonType, titleBar,
+        UDim2.new(0, btnWidth, 0, titleBtnH),
+        UDim2.new(0, titleBtnOffset, 0, topPadding))
+    
+    currentLeftButton = btn
+    currentLeftButtonBg = btnBg
     return btn
 end
 
--- Create title button background with dynamic width
-local titleBtnW = calculateButtonWidth("Delta Codex")
-local titleBtnBg = Instance.new("Frame")
-titleBtnBg.Name = "TitleButtonBg"
-titleBtnBg.Size = UDim2.new(0, titleBtnW, 0, titleBtnH)
-titleBtnBg.Position = UDim2.new(0.5, -titleBtnW/2, 0, 8) -- Center horizontally
-titleBtnBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
-titleBtnBg.BackgroundTransparency = 0.1
-titleBtnBg.Parent = titleBar
-titleBtnBg.ZIndex = 2
+-- Create close button
+local closeBtnW = calculateButtonWidth("Close")
+local closeBtn = createStyledButton("Close", titleBar,
+    UDim2.new(0, closeBtnW, 0, titleBtnH),
+    UDim2.new(1, -(titleBtnOffset + closeBtnW), 0, topPadding))
 
--- Add gradient to title button background
-local titleGradient = Instance.new("UIGradient")
-titleGradient.Transparency = NumberSequence.new({
-    NumberSequenceKeypoint.new(0, 0),
-    NumberSequenceKeypoint.new(0.5, 0.1),
-    NumberSequenceKeypoint.new(1, 0.3)
-})
-titleGradient.Color = ColorSequence.new({
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 24, 35)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(15, 18, 26)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 12, 18))
-})
-titleGradient.Rotation = 45
-titleGradient.Parent = titleBtnBg
+-- Content Panel
+local contentPanel = Instance.new("Frame")
+contentPanel.Name = "ContentPanel"
+contentPanel.Size = UDim2.new(1, 0, 1, -titleBarHeight)
+contentPanel.Position = UDim2.new(0, 0, 0, titleBarHeight)
+contentPanel.BackgroundTransparency = 1
+contentPanel.Parent = mainFrame
 
--- Corner for title button background
-local titleBtnCorner = Instance.new("UICorner")
-titleBtnCorner.CornerRadius = UDim.new(0, 12)
-titleBtnCorner.Parent = titleBtnBg
+-- Button Names
+local buttonNames = {
+    "Overview", "Farming", "Sea Events", "Islands", "Quests", "Fruit",
+    "Teleport", "Status", "Visual", "Shop", "Settings", "About"
+}
 
--- Stroke for title button background
-local titleBtnStroke = Instance.new("UIStroke")
-titleBtnStroke.Thickness = 1
-titleBtnStroke.Color = Color3.fromRGB(20, 24, 35)
-titleBtnStroke.Transparency = 0.7
-titleBtnStroke.Parent = titleBtnBg
-
--- Create title button
-titleButton = Instance.new("TextButton")
-titleButton.Name = "TitleButton"
-titleButton.Size = UDim2.new(1, 0, 1, 0)
-titleButton.Position = UDim2.new(0, 0, 0, 0)
-titleButton.BackgroundTransparency = 1
-titleButton.Text = "Delta Codex"
-titleButton.TextColor3 = Color3.fromRGB(220, 225, 235)
-titleButton.Font = Enum.Font.GothamBold
-titleButton.TextSize = 16
-titleButton.ZIndex = 3
-titleButton.Parent = titleBtnBg
-
--- Add hover effects to title button
-titleButton.MouseEnter:Connect(function()
-    titleGradient.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0),
-        NumberSequenceKeypoint.new(0.5, 0.05),
-        NumberSequenceKeypoint.new(1, 0.2)
-    })
-    titleBtnStroke.Transparency = 0.5
-end)
-
-titleButton.MouseLeave:Connect(function()
-    titleGradient.Transparency = NumberSequence.new({
-        NumberSequenceKeypoint.new(0, 0),
-        NumberSequenceKeypoint.new(0.5, 0.1),
-        NumberSequenceKeypoint.new(1, 0.3)
-    })
-    titleBtnStroke.Transparency = 0.7
-end)
-
--- Create minimize and back buttons with dynamic width
-local function createTitleBarButton(buttonType)
-    -- Clean up any existing buttons first
-    local existingMinimize = titleBar:FindFirstChild("MinimizeButtonBg")
-    local existingBack = titleBar:FindFirstChild("BackButtonBg")
-    
-    if existingMinimize then existingMinimize:Destroy() end
-    if existingBack then existingBack:Destroy() end
-    
-    -- Create new button
-    if buttonType == "Minimize" then
-        local minimizeBtnW = calculateButtonWidth("Minimize")
-        return createStyledButton("Minimize", titleBar, UDim2.new(0, minimizeBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, topPadding))
-    else
-        local backBtnW = calculateButtonWidth("Back")
-        return createStyledButton("Back", titleBar, UDim2.new(0, backBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, topPadding))
+-- Clear content panel function
+local function clearContent()
+    debugPrint("clearContent called")
+    for _, child in ipairs(contentPanel:GetChildren()) do
+        child:Destroy()
     end
 end
 
--- Initialize with Minimize button
-minimizeBtn = createTitleBarButton("Minimize")
-
--- Function to show button list (main menu)
+-- Show button list function
 local function showButtonList()
     debugPrint("showButtonList called")
     clearContent()
-    minimizeBtn = createTitleBarButton("Minimize")
+    switchTitleBarButton("Minimize")
     titleButton.Text = "Delta Codex"
     contentPanel.Visible = true
+    
     local btnW, btnH = 160, 36
     local gapX, gapY = 16, 8
     local cols, rows = 2, 6
     local offsetX = 22
     local offsetY = 4
-    
+
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
             local col = ((i-1) % cols)
             local row = math.floor((i-1) / cols)
 
-            -- Create button background frame for gradient
             local btnBg = Instance.new("Frame")
             btnBg.Name = name .. "ButtonBg"
             btnBg.Size = UDim2.new(0, btnW, 0, btnH)
             btnBg.Position = UDim2.new(0, offsetX + col * (btnW + gapX), 0, offsetY + row * (btnH + gapY))
-            btnBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26) -- Darker base color
+            btnBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
             btnBg.BackgroundTransparency = 0.1
             btnBg.Parent = contentPanel
             btnBg.ZIndex = 2
@@ -308,16 +275,16 @@ local function showButtonList()
             gradient.Parent = btnBg
 
             -- Corner for background
-            local btnBgCorner = Instance.new("UICorner")
-            btnBgCorner.CornerRadius = UDim.new(0, 12)
-            btnBgCorner.Parent = btnBg
+            local btnCorner = Instance.new("UICorner")
+            btnCorner.CornerRadius = UDim.new(0, 12)
+            btnCorner.Parent = btnBg
 
             -- Stroke for background
-            local btnBgStroke = Instance.new("UIStroke")
-            btnBgStroke.Thickness = 1
-            btnBgStroke.Color = Color3.fromRGB(20, 24, 35)
-            btnBgStroke.Transparency = 0.7
-            btnBgStroke.Parent = btnBg
+            local btnStroke = Instance.new("UIStroke")
+            btnStroke.Thickness = 1
+            btnStroke.Color = Color3.fromRGB(20, 24, 35)
+            btnStroke.Transparency = 0.7
+            btnStroke.Parent = btnBg
 
             -- Create actual button on top
             local btn = Instance.new("TextButton")
@@ -332,64 +299,37 @@ local function showButtonList()
             btn.ZIndex = 3 -- Ensure text is above gradient
             btn.Parent = btnBg
 
-            -- Enhanced hover effect
-            btn.MouseEnter:Connect(function()
-                gradient.Transparency = NumberSequence.new({
-                    NumberSequenceKeypoint.new(0, 0),
-                    NumberSequenceKeypoint.new(0.5, 0.05),
-                    NumberSequenceKeypoint.new(1, 0.2)
-                })
-                btnBgStroke.Transparency = 0.5
-            end)
-
-            btn.MouseLeave:Connect(function()
-                gradient.Transparency = NumberSequence.new({
-                    NumberSequenceKeypoint.new(0, 0),
-                    NumberSequenceKeypoint.new(0.5, 0.1),
-                    NumberSequenceKeypoint.new(1, 0.3)
-                })
-                btnBgStroke.Transparency = 0.7
-            end)
-
             btn.MouseButton1Click:Connect(function()
                 debugPrint("Button clicked")
                 contentPanel.Visible = false
-                backBtn = createTitleBarButton("Back")
+                local backBtn = switchTitleBarButton("Back")
                 titleButton.Text = name
                 if panelBuilders[name] then
                     clearContent()
                     panelBuilders[name](contentPanel)
+                end
+                
+                -- Set up back button click handler
+                if backBtn then
+                    backBtn.MouseButton1Click:Connect(function()
+                        showButtonList()
+                    end)
                 end
             end)
         end
     end
 end
 
--- Update panel builders to handle button switching
-for name, builder in pairs(panelBuilders) do
-    local originalBuilder = builder
-    panelBuilders[name] = function(parent)
-        contentPanel.Visible = false
-        backBtn = createTitleBarButton("Back")
-        titleButton.Text = name
-        if originalBuilder then
-            originalBuilder(parent)
-        end
-        
-        -- Set up back button click handler
-        if backBtn then
-            backBtn.MouseButton1Click:Connect(function()
-                showButtonList()
-            end)
-        end
-    end
-end
-
--- Ensure showButtonList is called on load
-debugPrint("Calling showButtonList on load")
+-- Initialize UI
 showButtonList()
 
--- Ensure Close button always works
+-- Set up title button click handler
+titleButton.MouseButton1Click:Connect(function()
+    debugPrint("Title button clicked")
+    showButtonList()
+end)
+
+-- Close button handler
 if closeBtn then
     closeBtn.MouseButton1Click:Connect(function()
         debugPrint("Close button clicked")
