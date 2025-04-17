@@ -71,20 +71,6 @@ titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
 
--- Add panel title label (new)
-local panelTitleLabel = Instance.new("TextLabel")
-panelTitleLabel.Name = "PanelTitleLabel"
-panelTitleLabel.Size = UDim2.new(0, titleBtnW, 0, titleBtnH)
-panelTitleLabel.Position = UDim2.new(0.5, -titleBtnW/2, 0, 8)
-panelTitleLabel.BackgroundTransparency = 1
-panelTitleLabel.Text = ""
-panelTitleLabel.TextColor3 = Color3.fromRGB(220, 225, 235)
-panelTitleLabel.Font = Enum.Font.GothamBold
-panelTitleLabel.TextSize = 16
-panelTitleLabel.Visible = false
-panelTitleLabel.Parent = titleBar
-panelTitleLabel.ZIndex = 3
-
 -- Function to create styled button (for title bar buttons)
 local function createStyledButton(name, parent, size, position)
     local btnBg = Instance.new("Frame")
@@ -1030,7 +1016,6 @@ local function showButtonList()
     backBtn.Visible = false
     minimizeBtn.Visible = true
     titleButton.Visible = false -- Hide title button
-    panelTitleLabel.Visible = false -- Hide panel title
     contentPanel.Visible = true
     local btnW, btnH = 160, 36
     local gapX, gapY = 16, 8
@@ -1117,9 +1102,7 @@ local function showButtonList()
                 contentPanel.Visible = false
                 backBtn.Visible = true
                 minimizeBtn.Visible = false
-                titleButton.Visible = false -- Hide title button
-                panelTitleLabel.Text = name -- Set panel title text
-                panelTitleLabel.Visible = true -- Show panel title
+                titleButton.Text = name
                 if panelBuilders[name] then
                     clearContent()
                     panelBuilders[name](contentPanel)
@@ -1133,15 +1116,19 @@ end
 debugPrint("Calling showButtonList on load")
 showButtonList()
 
--- Back button click handler to show Minimize button
+-- Back button click handler
 backBtn.MouseButton1Click:Connect(function()
     debugPrint("Back button clicked")
     showButtonList()
     backBtn.Visible = false
     minimizeBtn.Visible = true
-    titleButton.Visible = true -- Show title button
     titleButton.Text = "Delta Codex"
-    panelTitleLabel.Visible = false -- Hide panel title
+end)
+
+-- Title button click handler
+titleButton.MouseButton1Click:Connect(function()
+    debugPrint("Title button clicked")
+    showButtonList()
 end)
 
 -- Ensure Close button always works
@@ -1153,14 +1140,6 @@ if closeBtn then
 else
     debugPrint("closeBtn is not initialized")
 end
-
--- Add click handler for title button
-titleButton.MouseButton1Click:Connect(function()
-    debugPrint("Title button clicked")
-    showButtonList()
-    titleButton.Visible = true -- Ensure title button is visible
-    panelTitleLabel.Visible = false -- Hide panel title
-end)
 
 -- Also add the same effects to the title button
 local function addPressEffects(button, background)
