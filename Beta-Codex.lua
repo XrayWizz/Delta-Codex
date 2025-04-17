@@ -1015,7 +1015,7 @@ local function showButtonList()
     clearContent()
     backBtn.Visible = false
     minimizeBtn.Visible = true
-    titleButton.Visible = false -- Hide title button
+    titleButton.Text = "Delta Codex"
     contentPanel.Visible = true
     local btnW, btnH = 160, 36
     local gapX, gapY = 16, 8
@@ -1116,19 +1116,13 @@ end
 debugPrint("Calling showButtonList on load")
 showButtonList()
 
--- Back button click handler
+-- Back button click handler to show Minimize button
 backBtn.MouseButton1Click:Connect(function()
     debugPrint("Back button clicked")
     showButtonList()
     backBtn.Visible = false
     minimizeBtn.Visible = true
     titleButton.Text = "Delta Codex"
-end)
-
--- Title button click handler
-titleButton.MouseButton1Click:Connect(function()
-    debugPrint("Title button clicked")
-    showButtonList()
 end)
 
 -- Ensure Close button always works
@@ -1140,6 +1134,12 @@ if closeBtn then
 else
     debugPrint("closeBtn is not initialized")
 end
+
+-- Add click handler for title button
+titleButton.MouseButton1Click:Connect(function()
+    debugPrint("Title button clicked")
+    showButtonList()
+end)
 
 -- Also add the same effects to the title button
 local function addPressEffects(button, background)
