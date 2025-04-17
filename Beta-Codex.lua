@@ -82,6 +82,21 @@ local function createStyledButton(name, parent, size, position)
     btnBg.Parent = parent
     btnBg.ZIndex = 2
 
+    -- Add highlight effect frame
+    local highlight = Instance.new("Frame")
+    highlight.Name = "PressHighlight"
+    highlight.Size = UDim2.new(1, 0, 1, 0)
+    highlight.Position = UDim2.new(0, 0, 0, 0)
+    highlight.BackgroundColor3 = Color3.fromRGB(30, 50, 120) -- Dark blue highlight
+    highlight.BackgroundTransparency = 1 -- Start fully transparent
+    highlight.ZIndex = 2
+    highlight.Parent = btnBg
+
+    -- Add corner to highlight
+    local highlightCorner = Instance.new("UICorner")
+    highlightCorner.CornerRadius = UDim.new(0, 12)
+    highlightCorner.Parent = highlight
+
     local gradient = Instance.new("UIGradient")
     gradient.Transparency = NumberSequence.new({
         NumberSequenceKeypoint.new(0, 0),
@@ -118,7 +133,13 @@ local function createStyledButton(name, parent, size, position)
     btn.ZIndex = 3
     btn.Parent = btnBg
 
-    -- Hover effects
+    -- Enhanced hover and press effects
+    local function updateHighlight(transparency)
+        game:GetService("TweenService"):Create(highlight, TweenInfo.new(0.15), {
+            BackgroundTransparency = transparency
+        }):Play()
+    end
+
     btn.MouseEnter:Connect(function()
         gradient.Transparency = NumberSequence.new({
             NumberSequenceKeypoint.new(0, 0),
@@ -135,6 +156,16 @@ local function createStyledButton(name, parent, size, position)
             NumberSequenceKeypoint.new(1, 0.3)
         })
         btnStroke.Transparency = 0.7
+        updateHighlight(1) -- Reset highlight when mouse leaves
+    end)
+
+    -- Add press effects
+    btn.MouseButton1Down:Connect(function()
+        updateHighlight(0.7) -- Show highlight when pressed
+    end)
+
+    btn.MouseButton1Up:Connect(function()
+        updateHighlight(1) -- Hide highlight when released
     end)
 
     return btn
@@ -1109,3 +1140,42 @@ titleButton.MouseButton1Click:Connect(function()
     debugPrint("Title button clicked")
     showButtonList()
 end)
+
+-- Also add the same effects to the title button
+local function addPressEffects(button, background)
+    -- Add highlight effect frame
+    local highlight = Instance.new("Frame")
+    highlight.Name = "PressHighlight"
+    highlight.Size = UDim2.new(1, 0, 1, 0)
+    highlight.Position = UDim2.new(0, 0, 0, 0)
+    highlight.BackgroundColor3 = Color3.fromRGB(30, 50, 120) -- Dark blue highlight
+    highlight.BackgroundTransparency = 1 -- Start fully transparent
+    highlight.ZIndex = 2
+    highlight.Parent = background
+
+    -- Add corner to highlight
+    local highlightCorner = Instance.new("UICorner")
+    highlightCorner.CornerRadius = UDim.new(0, 12)
+    highlightCorner.Parent = highlight
+
+    local function updateHighlight(transparency)
+        game:GetService("TweenService"):Create(highlight, TweenInfo.new(0.15), {
+            BackgroundTransparency = transparency
+        }):Play()
+    end
+
+    button.MouseButton1Down:Connect(function()
+        updateHighlight(0.7) -- Show highlight when pressed
+    end)
+
+    button.MouseButton1Up:Connect(function()
+        updateHighlight(1) -- Hide highlight when released
+    end)
+
+    button.MouseLeave:Connect(function()
+        updateHighlight(1) -- Reset highlight when mouse leaves
+    end)
+end
+
+-- Apply press effects to title button after it's created
+addPressEffects(titleButton, titleBtnBg)
