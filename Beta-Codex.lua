@@ -50,10 +50,15 @@ mainStroke.Parent = mainFrame
 
 -- Title Bar (adjusted for new dimensions)
 local titleBarHeight = 40
-local titleBtnW = 160 -- Match main menu button width
+local minButtonWidth = 80 -- Minimum width for buttons
 local titleBtnH = 24
 local titleBtnOffset = 22 -- Match main menu grid offset
-local gapX = 16
+local buttonPadding = 24 -- Padding for text inside buttons
+
+-- Function to calculate button width based on text
+local function calculateButtonWidth(text)
+    return math.max(minButtonWidth, string.len(text) * 8 + buttonPadding * 2) -- 8 pixels per character plus padding
+end
 
 -- Title Bar
 local titleBar = Instance.new("Frame")
@@ -135,7 +140,8 @@ local function createStyledButton(name, parent, size, position)
     return btn
 end
 
--- Create title button background (using same style as menu buttons)
+-- Create title button background with dynamic width
+local titleBtnW = calculateButtonWidth("Delta Codex")
 local titleBtnBg = Instance.new("Frame")
 titleBtnBg.Name = "TitleButtonBg"
 titleBtnBg.Size = UDim2.new(0, titleBtnW, 0, titleBtnH)
@@ -204,14 +210,17 @@ titleButton.MouseLeave:Connect(function()
     titleBtnStroke.Transparency = 0.7
 end)
 
--- Create minimize and back buttons with adjusted positions
-minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
+-- Create minimize and back buttons with dynamic width
+local minimizeBtnW = calculateButtonWidth("Minimize")
+minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, minimizeBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
 minimizeBtn.Visible = true
 
-backBtn = createStyledButton("Back", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
+local backBtnW = calculateButtonWidth("Back")
+backBtn = createStyledButton("Back", titleBar, UDim2.new(0, backBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
 backBtn.Visible = false
 
-closeBtn = createStyledButton("Close", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(1, -(titleBtnOffset + titleBtnW), 0, 8))
+local closeBtnW = calculateButtonWidth("Close")
+closeBtn = createStyledButton("Close", titleBar, UDim2.new(0, closeBtnW, 0, titleBtnH), UDim2.new(1, -(titleBtnOffset + closeBtnW), 0, 8))
 
 -- Content Panel (for both button list and context screens)
 local contentPanel = Instance.new("Frame")
