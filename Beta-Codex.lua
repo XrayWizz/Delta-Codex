@@ -31,11 +31,11 @@ if not screenGui then debugPrint("screenGui is not initialized") end
 -- Main Frame (adjusted size and position)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 380, 0, 340) -- Reduced height to match image
-mainFrame.Position = UDim2.new(0.5, -190, 0.45, -170) -- Moved up slightly and centered
-mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22) -- much darker
+mainFrame.Size = UDim2.new(0, 380, 0, 340)
+mainFrame.Position = UDim2.new(0.5, -190, 0.42, -170) -- Moved slightly higher (from 0.45 to 0.42)
+mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
 mainFrame.BorderSizePixel = 0
-mainFrame.BackgroundTransparency = 0.15 -- Increased transparency
+mainFrame.BackgroundTransparency = 0.15
 mainFrame.Parent = screenGui
 local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 14)
@@ -57,8 +57,8 @@ local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22) -- much darker shade
-titleBar.BackgroundTransparency = 0.15 -- Increased transparency
+titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
+titleBar.BackgroundTransparency = 0.2 -- Slightly more transparent than main frame
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
