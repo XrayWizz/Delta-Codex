@@ -50,9 +50,9 @@ mainStroke.Parent = mainFrame
 
 -- Title Bar (adjusted for new dimensions)
 local titleBarHeight = 40 -- Increased height slightly
-local titleBtnW = 100 -- Increased from 80
+local titleBtnW = 160 -- Match main menu button width
 local titleBtnH = 24
-local titleBtnOffset = 35 -- Increased from previous offsetX (22)
+local titleBtnOffset = 22 -- Match main menu grid offset
 local gapX = 16
 local offsetX = 22
 
@@ -67,20 +67,25 @@ titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
 
--- Title Label with fixed positioning
+-- Title Label with adjusted Y position
 titleLabel = Instance.new("TextLabel")
 titleLabel.Name = "TitleLabel"
-titleLabel.Size = UDim2.new(1, 0, 1, 0) -- Full size of title bar
-titleLabel.Position = UDim2.new(0, 0, 0, 0) -- Start from top-left
+titleLabel.Size = UDim2.new(1, 0, 1, 0)
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
 titleLabel.BackgroundTransparency = 1
 titleLabel.Text = "Delta Codex"
 titleLabel.TextColor3 = Color3.fromRGB(220, 225, 235)
 titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextSize = 17
 titleLabel.TextXAlignment = Enum.TextXAlignment.Center
-titleLabel.TextYAlignment = Enum.TextYAlignment.Center -- Vertically center the text
+titleLabel.TextYAlignment = Enum.TextYAlignment.Top -- Align to top
 titleLabel.Parent = titleBar
 titleLabel.ZIndex = 3
+
+-- Add padding to move text down
+local textPadding = Instance.new("UIPadding")
+textPadding.PaddingTop = UDim.new(0, 12) -- Adjust this value to match the image
+textPadding.Parent = titleLabel
 
 -- Check if titleLabel is initialized
 if not titleLabel then debugPrint("titleLabel is not initialized") end
@@ -154,14 +159,14 @@ local function createStyledButton(name, parent, size, position)
     return btn
 end
 
--- Create title bar buttons with adjusted positions
-local minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, 100, 0, 24), UDim2.new(0, 35, 0, 8))
+-- Create title bar buttons with adjusted width and positions
+local minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
 minimizeBtn.Visible = true
 
-backBtn = createStyledButton("Back", titleBar, UDim2.new(0, 100, 0, 24), UDim2.new(0, 35, 0, 8))
+backBtn = createStyledButton("Back", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
 backBtn.Visible = false
 
-closeBtn = createStyledButton("Close", titleBar, UDim2.new(0, 100, 0, 24), UDim2.new(1, -135, 0, 8))
+closeBtn = createStyledButton("Close", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(1, -(titleBtnOffset + titleBtnW), 0, 8))
 
 -- Content Panel (for both button list and context screens)
 local contentPanel = Instance.new("Frame")
