@@ -40,18 +40,18 @@ local BUTTON_WIDTH = 160
 local BUTTON_HEIGHT = 30
 local GAP_X = 20  -- Increased from 16 to 20 for better horizontal spacing
 local GAP_Y = 14  -- Increased from 10 to 14 for better vertical spacing
-local TITLE_BAR_HEIGHT = 42
+local TITLE_BAR_HEIGHT = 38  -- Reduced from 42 to 38 for closer feel
 
 -- Content Panel offset from title bar
-local CONTENT_OFFSET = 6  -- Small offset between title bar and content
+local CONTENT_OFFSET = 4  -- Reduced from 6 to 4 for tighter spacing
 
 -- Main Frame (compact)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
 mainFrame.Size = UDim2.new(0, 380, 0, 280)
 mainFrame.Position = UDim2.new(0.5, -190, 0.5, -170)
-mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-mainFrame.BackgroundTransparency = 0.1
+mainFrame.BackgroundColor3 = COLORS.surface  -- Using consistent surface color
+mainFrame.BackgroundTransparency = 0
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
@@ -272,7 +272,8 @@ local contentPanel = Instance.new("Frame")
 contentPanel.Name = "ContentPanel"
 contentPanel.Size = UDim2.new(1, 0, 1, -(TITLE_BAR_HEIGHT + CONTENT_OFFSET))
 contentPanel.Position = UDim2.new(0, 0, 0, TITLE_BAR_HEIGHT)
-contentPanel.BackgroundTransparency = 1
+contentPanel.BackgroundColor3 = COLORS.surface  -- Using consistent surface color
+contentPanel.BackgroundTransparency = 0
 contentPanel.Parent = mainFrame
 
 -- Check if contentPanel is initialized
@@ -1035,7 +1036,7 @@ local function showButtonList()
     contentPanel.Visible = true
     
     local cols, rows = 2, 6
-    local offsetY = 8  -- Increased from 4 to 8 for better initial spacing
+    local offsetY = 6  -- Reduced from 8 to 6 for tighter spacing with title bar
 
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
