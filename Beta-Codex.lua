@@ -67,17 +67,18 @@ titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
 
--- Title Label
+-- Title Label with fixed positioning
 titleLabel = Instance.new("TextLabel")
 titleLabel.Name = "TitleLabel"
-titleLabel.Size = UDim2.new(1, -(2 * (titleBtnOffset + titleBtnW + 10)), 1, 0)
-titleLabel.Position = UDim2.new(0.5, 0, 0, 8) -- Centered horizontally, slight vertical offset
+titleLabel.Size = UDim2.new(1, 0, 1, 0) -- Full size of title bar
+titleLabel.Position = UDim2.new(0, 0, 0, 0) -- Start from top-left
 titleLabel.BackgroundTransparency = 1
 titleLabel.Text = "Delta Codex"
 titleLabel.TextColor3 = Color3.fromRGB(220, 225, 235)
 titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextSize = 17
 titleLabel.TextXAlignment = Enum.TextXAlignment.Center
+titleLabel.TextYAlignment = Enum.TextYAlignment.Center -- Vertically center the text
 titleLabel.Parent = titleBar
 titleLabel.ZIndex = 3
 
