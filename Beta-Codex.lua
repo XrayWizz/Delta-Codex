@@ -932,10 +932,11 @@ local function showButtonList()
     titleLabel.Text = "Delta Codex"
     contentPanel.Visible = true
     local btnW, btnH = 160, 36
-    local gapX, gapY = 16, 8 -- Reduced vertical gap
+    local gapX, gapY = 16, 8
     local cols, rows = 2, 6
     local offsetX = 22
-    local offsetY = 12 -- Adjusted top offset
+    local offsetY = 12
+    
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
             local col = ((i-1) % cols)
@@ -945,7 +946,7 @@ local function showButtonList()
             btn.Size = UDim2.new(0, btnW, 0, btnH)
             btn.Position = UDim2.new(0, offsetX + col * (btnW + gapX), 0, offsetY + row * (btnH + gapY))
             btn.BackgroundColor3 = COLORS.surfaceVariant
-            btn.BackgroundTransparency = 0.1 -- Added slight transparency
+            btn.BackgroundTransparency = 0.1
             btn.Text = name
             btn.TextColor3 = COLORS.onSurface
             btn.Font = Enum.Font.GothamSemibold
@@ -953,6 +954,21 @@ local function showButtonList()
             btn.AutoButtonColor = true
             btn.Parent = contentPanel
             btn.ZIndex = 2
+
+            -- Add gradient for depth effect
+            local gradient = Instance.new("UIGradient")
+            gradient.Transparency = NumberSequence.new({
+                NumberSequenceKeypoint.new(0, 0),      -- Center is less transparent
+                NumberSequenceKeypoint.new(0.5, 0.1),  -- Mid point slightly more transparent
+                NumberSequenceKeypoint.new(1, 0.3)     -- Edges are most transparent
+            })
+            gradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(27, 32, 48)),     -- Center color (original)
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(22, 26, 38)),   -- Mid point slightly darker
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(18, 21, 31))      -- Edges darkest
+            })
+            gradient.Rotation = 45 -- Diagonal gradient for better effect
+            gradient.Parent = btn
 
             local btnCorner = Instance.new("UICorner")
             btnCorner.CornerRadius = UDim.new(0, 12)
@@ -963,6 +979,25 @@ local function showButtonList()
             btnStroke.Color = COLORS.outline
             btnStroke.Transparency = 0.4
             btnStroke.Parent = btn
+
+            -- Enhanced hover effect with gradient
+            btn.MouseEnter:Connect(function()
+                gradient.Transparency = NumberSequence.new({
+                    NumberSequenceKeypoint.new(0, 0),
+                    NumberSequenceKeypoint.new(0.5, 0.05),
+                    NumberSequenceKeypoint.new(1, 0.2)
+                })
+                btnStroke.Transparency = 0.2
+            end)
+
+            btn.MouseLeave:Connect(function()
+                gradient.Transparency = NumberSequence.new({
+                    NumberSequenceKeypoint.new(0, 0),
+                    NumberSequenceKeypoint.new(0.5, 0.1),
+                    NumberSequenceKeypoint.new(1, 0.3)
+                })
+                btnStroke.Transparency = 0.4
+            end)
 
             btn.MouseButton1Click:Connect(function()
                 debugPrint("Button clicked")
