@@ -28,23 +28,24 @@ screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGu
 -- Check if screenGui is initialized
 if not screenGui then debugPrint("screenGui is not initialized") end
 
--- Main Frame (adjusted size and position)
+-- Main Frame
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
 mainFrame.Size = UDim2.new(0, 380, 0, 340)
-mainFrame.Position = UDim2.new(0.5, -190, 0.42, -170) -- Moved slightly higher (from 0.45 to 0.42)
+mainFrame.Position = UDim2.new(0.5, -190, 0.42, -170)
 mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-mainFrame.BorderSizePixel = 0
 mainFrame.BackgroundTransparency = 0.15
+mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
+
 local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 14)
 mainCorner.Parent = mainFrame
 
 local mainStroke = Instance.new("UIStroke")
-mainStroke.Thickness = 1.5
-mainStroke.Color = COLORS.outline
-mainStroke.Transparency = 0.3
+mainStroke.Thickness = 1
+mainStroke.Color = Color3.fromRGB(20, 24, 35) -- Darker, less blue outline
+mainStroke.Transparency = 0.7 -- More transparent
 mainStroke.Parent = mainFrame
 
 -- Title Bar (adjusted for new dimensions)
@@ -58,7 +59,7 @@ titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
 titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
-titleBar.BackgroundTransparency = 0.15 -- Matched with main frame transparency
+titleBar.BackgroundTransparency = 0.15 -- Match main frame transparency
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
@@ -82,8 +83,8 @@ titleLabel.Size = UDim2.new(1, -2 * (offsetX + btnW), 1, 0)
 titleLabel.Position = UDim2.new(0, offsetX + btnW, 0, 4) -- move down for centering in taller title bar
 titleLabel.BackgroundTransparency = 1
 titleLabel.Text = "Delta Codex"
-titleLabel.TextColor3 = COLORS.onSurface
-titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextColor3 = Color3.fromRGB(220, 225, 235) -- Match button text color
+titleLabel.Font = Enum.Font.GothamBold -- Match button font
 titleLabel.TextSize = 17
 titleLabel.TextXAlignment = Enum.TextXAlignment.Center
 titleLabel.Parent = titleBar
@@ -95,78 +96,90 @@ if not titleLabel then debugPrint("titleLabel is not initialized") end
 -- Make back button smaller for title bar
 local backBtnW, backBtnH = 80, 24  -- new, smaller size for title bar buttons
 
--- Back Button (aligned with first grid column, perfectly aligned with Close button)
-local backBtn = Instance.new("TextButton")
-backBtn.Name = "BackButton"
-backBtn.Size = UDim2.new(0, backBtnW, 0, backBtnH)
-backBtn.Position = UDim2.new(0, offsetX, 0.5, -backBtnH/2 + 4) -- move down for centering
-backBtn.BackgroundColor3 = COLORS.surfaceVariant
-backBtn.Text = "Back"
-backBtn.TextColor3 = COLORS.onSurface
-backBtn.Font = Enum.Font.GothamSemibold
-backBtn.TextSize = 15
-backBtn.AutoButtonColor = true
-backBtn.Visible = false
-backBtn.Parent = titleBar
-backBtn.ZIndex = 3
+-- Function to create styled button (for title bar buttons)
+local function createStyledButton(name, parent, size, position)
+    -- Background frame for gradient
+    local btnBg = Instance.new("Frame")
+    btnBg.Name = name .. "ButtonBg"
+    btnBg.Size = size
+    btnBg.Position = position
+    btnBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+    btnBg.BackgroundTransparency = 0.1
+    btnBg.Parent = parent
+    btnBg.ZIndex = 2
 
--- Check if backBtn is initialized
-if not backBtn then debugPrint("backBtn is not initialized") end
+    -- Gradient
+    local gradient = Instance.new("UIGradient")
+    gradient.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0),
+        NumberSequenceKeypoint.new(0.5, 0.1),
+        NumberSequenceKeypoint.new(1, 0.3)
+    })
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 24, 35)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(15, 18, 26)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 12, 18))
+    })
+    gradient.Rotation = 45
+    gradient.Parent = btnBg
 
-local backCorner = Instance.new("UICorner")
-backCorner.CornerRadius = UDim.new(0, 10)
-backCorner.Parent = backBtn
+    -- Corner
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 12)
+    btnCorner.Parent = btnBg
 
-local backStroke = Instance.new("UIStroke")
-backStroke.Thickness = 1
-backStroke.Color = COLORS.outline
-backStroke.Transparency = 0.4
-backStroke.Parent = backBtn
+    -- Stroke
+    local btnStroke = Instance.new("UIStroke")
+    btnStroke.Thickness = 1
+    btnStroke.Color = Color3.fromRGB(20, 24, 35)
+    btnStroke.Transparency = 0.7
+    btnStroke.Parent = btnBg
 
--- Make close button smaller for title bar
--- Close Button (right-aligned in title bar)
-local closeBtn = Instance.new("TextButton")
-closeBtn.Name = "CloseButton"
-closeBtn.Size = UDim2.new(0, backBtnW, 0, backBtnH)
-closeBtn.Position = UDim2.new(1, -offsetX - backBtnW, 0.5, -backBtnH/2 + 4) -- move down for centering
-closeBtn.BackgroundColor3 = COLORS.surfaceVariant
-closeBtn.Text = "Close"
-closeBtn.TextColor3 = COLORS.onSurface
-closeBtn.Font = Enum.Font.GothamSemibold
-closeBtn.TextSize = 15
-closeBtn.AutoButtonColor = true
-closeBtn.Parent = titleBar
-closeBtn.ZIndex = 3
+    -- Button
+    local btn = Instance.new("TextButton")
+    btn.Name = name .. "Button"
+    btn.Size = UDim2.new(1, 0, 1, 0)
+    btn.Position = UDim2.new(0, 0, 0, 0)
+    btn.BackgroundTransparency = 1
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(220, 225, 235)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 16
+    btn.ZIndex = 3
+    btn.Parent = btnBg
 
--- Check if closeBtn is initialized
-if not closeBtn then debugPrint("closeBtn is not initialized") end
-
-local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 10)
-closeCorner.Parent = closeBtn
-
-local closeStroke = Instance.new("UIStroke")
-closeStroke.Thickness = 1
-closeStroke.Color = COLORS.outline
-closeStroke.Transparency = 0.4
-closeStroke.Parent = closeBtn
-
--- Add debug prints to button connections
-backBtn.MouseButton1Click:Connect(function()
-    debugPrint("Back button clicked")
-    showButtonList()
-    backBtn.Visible = false
-    titleLabel.Text = "Delta Codex"  -- Reset title to 'Delta Codex'
-end)
-
-if closeBtn then
-    closeBtn.MouseButton1Click:Connect(function()
-        debugPrint("Close button clicked")
-        screenGui.Enabled = false
+    -- Hover effects
+    btn.MouseEnter:Connect(function()
+        gradient.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0),
+            NumberSequenceKeypoint.new(0.5, 0.05),
+            NumberSequenceKeypoint.new(1, 0.2)
+        })
+        btnStroke.Transparency = 0.5
     end)
-else
-    debugPrint("closeBtn is not initialized")
+
+    btn.MouseLeave:Connect(function()
+        gradient.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0),
+            NumberSequenceKeypoint.new(0.5, 0.1),
+            NumberSequenceKeypoint.new(1, 0.3)
+        })
+        btnStroke.Transparency = 0.7
+    end)
+
+    return btn
 end
+
+-- Create styled back button
+backBtn = createStyledButton("Back", titleBar, UDim2.new(0, 80, 0, 24), UDim2.new(0, offsetX, 0.5, -12))
+backBtn.Visible = false
+
+-- Create styled close button
+closeBtn = createStyledButton("Close", titleBar, UDim2.new(0, 80, 0, 24), UDim2.new(1, -offsetX - 80, 0.5, -12))
+
+-- Update title label
+titleLabel.TextColor3 = Color3.fromRGB(220, 225, 235) -- Match button text color
+titleLabel.Font = Enum.Font.GothamBold -- Match button font
 
 -- Content Panel (for both button list and context screens)
 local contentPanel = Instance.new("Frame")
@@ -975,8 +988,8 @@ local function showButtonList()
             -- Stroke for background
             local btnBgStroke = Instance.new("UIStroke")
             btnBgStroke.Thickness = 1
-            btnBgStroke.Color = COLORS.outline
-            btnBgStroke.Transparency = 0.4
+            btnBgStroke.Color = Color3.fromRGB(20, 24, 35)
+            btnBgStroke.Transparency = 0.7
             btnBgStroke.Parent = btnBg
 
             -- Create actual button on top
@@ -999,7 +1012,7 @@ local function showButtonList()
                     NumberSequenceKeypoint.new(0.5, 0.05),
                     NumberSequenceKeypoint.new(1, 0.2)
                 })
-                btnBgStroke.Transparency = 0.2
+                btnBgStroke.Transparency = 0.5
             end)
 
             btn.MouseLeave:Connect(function()
@@ -1008,7 +1021,7 @@ local function showButtonList()
                     NumberSequenceKeypoint.new(0.5, 0.1),
                     NumberSequenceKeypoint.new(1, 0.3)
                 })
-                btnBgStroke.Transparency = 0.4
+                btnBgStroke.Transparency = 0.7
             end)
 
             btn.MouseButton1Click:Connect(function()
