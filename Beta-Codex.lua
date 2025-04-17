@@ -49,11 +49,12 @@ mainStroke.Transparency = 0.7 -- More transparent
 mainStroke.Parent = mainFrame
 
 -- Title Bar (adjusted for new dimensions)
-local titleBarHeight = 40
-local minButtonWidth = 80 -- Minimum width for buttons
+local titleBarHeight = 36 -- Slightly reduced height
+local minButtonWidth = 80
 local titleBtnH = 24
-local titleBtnOffset = 22 -- Match main menu grid offset
-local buttonPadding = 24 -- Padding for text inside buttons
+local titleBtnOffset = 22
+local buttonPadding = 24
+local topPadding = 6 -- Reduced from 8 to bring buttons up
 
 -- Function to calculate button width based on text
 local function calculateButtonWidth(text)
@@ -1021,7 +1022,7 @@ local function showButtonList()
     local gapX, gapY = 16, 8
     local cols, rows = 2, 6
     local offsetX = 22
-    local offsetY = 12
+    local offsetY = 4 -- Reduced from 12 to bring menu closer to title bar
     
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
