@@ -56,7 +56,7 @@ local titleBtnOffset = 35 -- Increased from previous offsetX (22)
 local gapX = 16
 local offsetX = 22
 
--- Title Bar with full transparency
+-- Title Bar
 local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
 titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
@@ -67,27 +67,15 @@ titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
 
--- Adjust vertical positioning for buttons and title
-local verticalOffset = 8 -- Increased from 4 to move everything down slightly
-
--- Make only the title bar draggable
--- This ensures the UI is always draggable by the title bar, regardless of panel
--- and that scroll frames and other content are not affected
--- (Roblox: set Active and Draggable on the Frame you want to drag)
-
-local titleCorner = Instance.new("UICorner")
-titleCorner.CornerRadius = UDim.new(0, 14)
-titleCorner.Parent = titleBar
-
--- Title Label (centered, 'Delta Codex')
-local titleLabel = Instance.new("TextLabel")
+-- Title Label
+titleLabel = Instance.new("TextLabel")
 titleLabel.Name = "TitleLabel"
 titleLabel.Size = UDim2.new(1, -(2 * (titleBtnOffset + titleBtnW + 10)), 1, 0)
-titleLabel.Position = UDim2.new(0, titleBtnOffset + titleBtnW + 10, 0, verticalOffset)
+titleLabel.Position = UDim2.new(0.5, 0, 0, 8) -- Centered horizontally, slight vertical offset
 titleLabel.BackgroundTransparency = 1
 titleLabel.Text = "Delta Codex"
-titleLabel.TextColor3 = Color3.fromRGB(220, 225, 235) -- Match button text color
-titleLabel.Font = Enum.Font.GothamBold -- Match button font
+titleLabel.TextColor3 = Color3.fromRGB(220, 225, 235)
+titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextSize = 17
 titleLabel.TextXAlignment = Enum.TextXAlignment.Center
 titleLabel.Parent = titleBar
@@ -96,16 +84,83 @@ titleLabel.ZIndex = 3
 -- Check if titleLabel is initialized
 if not titleLabel then debugPrint("titleLabel is not initialized") end
 
--- Create styled minimize button with adjusted vertical position
-local minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, verticalOffset))
+-- Function to create styled button (for title bar buttons)
+local function createStyledButton(name, parent, size, position)
+    local btnBg = Instance.new("Frame")
+    btnBg.Name = name .. "ButtonBg"
+    btnBg.Size = size
+    btnBg.Position = position
+    btnBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26)
+    btnBg.BackgroundTransparency = 0.1
+    btnBg.Parent = parent
+    btnBg.ZIndex = 2
+
+    local gradient = Instance.new("UIGradient")
+    gradient.Transparency = NumberSequence.new({
+        NumberSequenceKeypoint.new(0, 0),
+        NumberSequenceKeypoint.new(0.5, 0.1),
+        NumberSequenceKeypoint.new(1, 0.3)
+    })
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 24, 35)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(15, 18, 26)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 12, 18))
+    })
+    gradient.Rotation = 45
+    gradient.Parent = btnBg
+
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 12)
+    btnCorner.Parent = btnBg
+
+    local btnStroke = Instance.new("UIStroke")
+    btnStroke.Thickness = 1
+    btnStroke.Color = Color3.fromRGB(20, 24, 35)
+    btnStroke.Transparency = 0.7
+    btnStroke.Parent = btnBg
+
+    local btn = Instance.new("TextButton")
+    btn.Name = name .. "Button"
+    btn.Size = UDim2.new(1, 0, 1, 0)
+    btn.Position = UDim2.new(0, 0, 0, 0)
+    btn.BackgroundTransparency = 1
+    btn.Text = name
+    btn.TextColor3 = Color3.fromRGB(220, 225, 235)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 16
+    btn.ZIndex = 3
+    btn.Parent = btnBg
+
+    -- Hover effects
+    btn.MouseEnter:Connect(function()
+        gradient.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0),
+            NumberSequenceKeypoint.new(0.5, 0.05),
+            NumberSequenceKeypoint.new(1, 0.2)
+        })
+        btnStroke.Transparency = 0.5
+    end)
+
+    btn.MouseLeave:Connect(function()
+        gradient.Transparency = NumberSequence.new({
+            NumberSequenceKeypoint.new(0, 0),
+            NumberSequenceKeypoint.new(0.5, 0.1),
+            NumberSequenceKeypoint.new(1, 0.3)
+        })
+        btnStroke.Transparency = 0.7
+    end)
+
+    return btn
+end
+
+-- Create title bar buttons with adjusted positions
+local minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, 100, 0, 24), UDim2.new(0, 35, 0, 8))
 minimizeBtn.Visible = true
 
--- Create styled back button with adjusted vertical position
-backBtn = createStyledButton("Back", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, verticalOffset))
+backBtn = createStyledButton("Back", titleBar, UDim2.new(0, 100, 0, 24), UDim2.new(0, 35, 0, 8))
 backBtn.Visible = false
 
--- Create styled close button with adjusted vertical position
-closeBtn = createStyledButton("Close", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(1, -(titleBtnOffset + titleBtnW), 0, verticalOffset))
+closeBtn = createStyledButton("Close", titleBar, UDim2.new(0, 100, 0, 24), UDim2.new(1, -135, 0, 8))
 
 -- Content Panel (for both button list and context screens)
 local contentPanel = Instance.new("Frame")
