@@ -48,7 +48,50 @@ mainStroke.Color = Color3.fromRGB(20, 24, 35) -- Darker, less blue outline
 mainStroke.Transparency = 0.7 -- More transparent
 mainStroke.Parent = mainFrame
 
--- Function to create styled button
+-- Adjust button dimensions and spacing
+local titleBtnW = 130 -- Adjusted width to match red line marker
+local titleBtnH = 28 -- Slightly taller buttons
+local titleBtnOffset = 22 -- Base offset from edges
+local titleSpacing = 45 -- Space between buttons and title (yellow line)
+
+-- Title Bar
+local titleBarHeight = 40 -- Increased height slightly
+
+-- Title Bar
+local titleBar = Instance.new("Frame")
+titleBar.Name = "TitleBar"
+titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
+titleBar.Position = UDim2.new(0, 0, 0, 0)
+titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22)
+titleBar.BackgroundTransparency = 1 -- Fully transparent
+titleBar.BorderSizePixel = 0
+titleBar.Parent = mainFrame
+titleBar.ZIndex = 2
+
+-- Title Label with adjusted spacing
+titleLabel = Instance.new("TextLabel")
+titleLabel.Name = "TitleLabel"
+titleLabel.Size = UDim2.new(1, -(2 * (titleBtnW + titleSpacing)), 1, 0) -- Account for spacing on both sides
+titleLabel.Position = UDim2.new(0.5, 0, 0, 0)
+titleLabel.BackgroundTransparency = 1
+titleLabel.Text = "Delta Codex"
+titleLabel.TextColor3 = Color3.fromRGB(220, 225, 235)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 17
+titleLabel.TextXAlignment = Enum.TextXAlignment.Center
+titleLabel.TextYAlignment = Enum.TextYAlignment.Top
+titleLabel.Parent = titleBar
+titleLabel.ZIndex = 3
+
+-- Add padding to move text down
+local textPadding = Instance.new("UIPadding")
+textPadding.PaddingTop = UDim.new(0, 12)
+textPadding.Parent = titleLabel
+
+-- Check if titleLabel is initialized
+if not titleLabel then debugPrint("titleLabel is not initialized") end
+
+-- Function to create styled button (for title bar buttons)
 local function createStyledButton(name, parent, size, position)
     local btnBg = Instance.new("Frame")
     btnBg.Name = name .. "ButtonBg"
@@ -117,35 +160,27 @@ local function createStyledButton(name, parent, size, position)
     return btn
 end
 
--- Button dimensions to match main menu
-local btnW = 160
-local btnH = 36
-local btnOffset = 22
-
--- Create top buttons
-local titleBtn = createStyledButton("Delta Codex", mainFrame, UDim2.new(0, btnW, 0, btnH), UDim2.new(0.5, -btnW/2, 0, 8))
-titleBtn.ZIndex = 3
-
-local minimizeBtn = createStyledButton("Minimize", mainFrame, UDim2.new(0, btnW, 0, btnH), UDim2.new(0, btnOffset, 0, 8))
+-- Create title bar buttons with adjusted positions
+local minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 6))
 minimizeBtn.Visible = true
 
-local backBtn = createStyledButton("Back", mainFrame, UDim2.new(0, btnW, 0, btnH), UDim2.new(0, btnOffset, 0, 8))
+backBtn = createStyledButton("Back", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 6))
 backBtn.Visible = false
 
-local closeBtn = createStyledButton("Close", mainFrame, UDim2.new(0, btnW, 0, btnH), UDim2.new(1, -(btnOffset + btnW), 0, 8))
+closeBtn = createStyledButton("Close", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(1, -(titleBtnOffset + titleBtnW), 0, 6))
 
--- Content Panel
+-- Content Panel (for both button list and context screens)
 local contentPanel = Instance.new("Frame")
 contentPanel.Name = "ContentPanel"
-contentPanel.Size = UDim2.new(1, 0, 1, -(btnH + 16))
-contentPanel.Position = UDim2.new(0, 0, 0, btnH + 16)
+contentPanel.Size = UDim2.new(1, 0, 1, -titleBarHeight)
+contentPanel.Position = UDim2.new(0, 0, 0, titleBarHeight)
 contentPanel.BackgroundTransparency = 1
 contentPanel.Parent = mainFrame
 
 -- Check if contentPanel is initialized
 if not contentPanel then debugPrint("contentPanel is not initialized") end
 
--- Button Names
+-- Button Names (custom user list, in order, Feedback changed to About)
 local buttonNames = {
     "Overview", "Farming", "Sea Events", "Islands", "Quests", "Fruit",
     "Teleport", "Status", "Visual", "Shop", "Settings", "About"
@@ -890,35 +925,102 @@ local panelBuilders = {
     end,
 }
 
--- Show Button List function
+-- Debug print for showButtonList function
 local function showButtonList()
     debugPrint("showButtonList called")
-    for _, child in ipairs(contentPanel:GetChildren()) do
-        child:Destroy()
-    end
+    clearContent()
     backBtn.Visible = false
     minimizeBtn.Visible = true
-    titleBtn.Text = "Delta Codex"
+    titleLabel.Text = "Delta Codex"
     contentPanel.Visible = true
+    local btnW, btnH = 160, 36
+    local gapX, gapY = 16, 8
+    local cols, rows = 2, 6
+    local offsetX = 22
+    local offsetY = 12
     
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
-            local col = ((i-1) % 2)
-            local row = math.floor((i-1) / 2)
-            
-            local btn = createStyledButton(name, contentPanel, UDim2.new(0, btnW, 0, btnH), 
-                UDim2.new(0, 22 + col * (btnW + 16), 0, 12 + row * (btnH + 8)))
-                
+            local col = ((i-1) % cols)
+            local row = math.floor((i-1) / cols)
+
+            -- Create button background frame for gradient
+            local btnBg = Instance.new("Frame")
+            btnBg.Name = name .. "ButtonBg"
+            btnBg.Size = UDim2.new(0, btnW, 0, btnH)
+            btnBg.Position = UDim2.new(0, offsetX + col * (btnW + gapX), 0, offsetY + row * (btnH + gapY))
+            btnBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26) -- Darker base color
+            btnBg.BackgroundTransparency = 0.1
+            btnBg.Parent = contentPanel
+            btnBg.ZIndex = 2
+
+            -- Add gradient to background
+            local gradient = Instance.new("UIGradient")
+            gradient.Transparency = NumberSequence.new({
+                NumberSequenceKeypoint.new(0, 0),
+                NumberSequenceKeypoint.new(0.5, 0.1),
+                NumberSequenceKeypoint.new(1, 0.3)
+            })
+            gradient.Color = ColorSequence.new({
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 24, 35)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(15, 18, 26)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 12, 18))
+            })
+            gradient.Rotation = 45
+            gradient.Parent = btnBg
+
+            -- Corner for background
+            local btnBgCorner = Instance.new("UICorner")
+            btnBgCorner.CornerRadius = UDim.new(0, 12)
+            btnBgCorner.Parent = btnBg
+
+            -- Stroke for background
+            local btnBgStroke = Instance.new("UIStroke")
+            btnBgStroke.Thickness = 1
+            btnBgStroke.Color = Color3.fromRGB(20, 24, 35)
+            btnBgStroke.Transparency = 0.7
+            btnBgStroke.Parent = btnBg
+
+            -- Create actual button on top
+            local btn = Instance.new("TextButton")
+            btn.Name = name .. "Button"
+            btn.Size = UDim2.new(1, 0, 1, 0)
+            btn.Position = UDim2.new(0, 0, 0, 0)
+            btn.BackgroundTransparency = 1 -- Fully transparent background
+            btn.Text = name
+            btn.TextColor3 = Color3.fromRGB(220, 225, 235) -- Light grey text
+            btn.Font = Enum.Font.GothamBold
+            btn.TextSize = 16
+            btn.ZIndex = 3 -- Ensure text is above gradient
+            btn.Parent = btnBg
+
+            -- Enhanced hover effect
+            btn.MouseEnter:Connect(function()
+                gradient.Transparency = NumberSequence.new({
+                    NumberSequenceKeypoint.new(0, 0),
+                    NumberSequenceKeypoint.new(0.5, 0.05),
+                    NumberSequenceKeypoint.new(1, 0.2)
+                })
+                btnBgStroke.Transparency = 0.5
+            end)
+
+            btn.MouseLeave:Connect(function()
+                gradient.Transparency = NumberSequence.new({
+                    NumberSequenceKeypoint.new(0, 0),
+                    NumberSequenceKeypoint.new(0.5, 0.1),
+                    NumberSequenceKeypoint.new(1, 0.3)
+                })
+                btnBgStroke.Transparency = 0.7
+            end)
+
             btn.MouseButton1Click:Connect(function()
-                debugPrint(name .. " button clicked")
+                debugPrint("Button clicked")
                 contentPanel.Visible = false
                 backBtn.Visible = true
                 minimizeBtn.Visible = false
-                titleBtn.Text = name
+                titleLabel.Text = name
                 if panelBuilders[name] then
-                    for _, child in ipairs(contentPanel:GetChildren()) do
-                        child:Destroy()
-                    end
+                    clearContent()
                     panelBuilders[name](contentPanel)
                 end
             end)
@@ -926,20 +1028,25 @@ local function showButtonList()
     end
 end
 
--- Back button handler
+-- Ensure showButtonList is called on load
+debugPrint("Calling showButtonList on load")
+showButtonList()
+
+-- Back button click handler to show Minimize button
 backBtn.MouseButton1Click:Connect(function()
     debugPrint("Back button clicked")
     showButtonList()
     backBtn.Visible = false
     minimizeBtn.Visible = true
-    titleBtn.Text = "Delta Codex"
+    titleLabel.Text = "Delta Codex"
 end)
 
--- Close button handler
-closeBtn.MouseButton1Click:Connect(function()
-    debugPrint("Close button clicked")
-    screenGui:Destroy()
-end)
-
--- Initialize the UI
-showButtonList()
+-- Ensure Close button always works
+if closeBtn then
+    closeBtn.MouseButton1Click:Connect(function()
+        debugPrint("Close button clicked")
+        screenGui.Enabled = false
+    end)
+else
+    debugPrint("closeBtn is not initialized")
+end
