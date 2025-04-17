@@ -941,53 +941,65 @@ local function showButtonList()
         if name ~= "" then
             local col = ((i-1) % cols)
             local row = math.floor((i-1) / cols)
-            local btn = Instance.new("TextButton")
-            btn.Name = name .. "Button"
-            btn.Size = UDim2.new(0, btnW, 0, btnH)
-            btn.Position = UDim2.new(0, offsetX + col * (btnW + gapX), 0, offsetY + row * (btnH + gapY))
-            btn.BackgroundColor3 = COLORS.surfaceVariant
-            btn.BackgroundTransparency = 0.1
-            btn.Text = name
-            btn.TextColor3 = Color3.fromRGB(220, 225, 235) -- Light grey color
-            btn.Font = Enum.Font.GothamBold -- Changed to bold
-            btn.TextSize = 16
-            btn.AutoButtonColor = true
-            btn.Parent = contentPanel
-            btn.ZIndex = 2
 
-            -- Add gradient for depth effect
+            -- Create button background frame for gradient
+            local btnBg = Instance.new("Frame")
+            btnBg.Name = name .. "ButtonBg"
+            btnBg.Size = UDim2.new(0, btnW, 0, btnH)
+            btnBg.Position = UDim2.new(0, offsetX + col * (btnW + gapX), 0, offsetY + row * (btnH + gapY))
+            btnBg.BackgroundColor3 = Color3.fromRGB(15, 18, 26) -- Darker base color
+            btnBg.BackgroundTransparency = 0.1
+            btnBg.Parent = contentPanel
+            btnBg.ZIndex = 2
+
+            -- Add gradient to background
             local gradient = Instance.new("UIGradient")
             gradient.Transparency = NumberSequence.new({
-                NumberSequenceKeypoint.new(0, 0),      -- Center is less transparent
-                NumberSequenceKeypoint.new(0.5, 0.1),  -- Mid point slightly more transparent
-                NumberSequenceKeypoint.new(1, 0.3)     -- Edges are most transparent
+                NumberSequenceKeypoint.new(0, 0),
+                NumberSequenceKeypoint.new(0.5, 0.1),
+                NumberSequenceKeypoint.new(1, 0.3)
             })
             gradient.Color = ColorSequence.new({
-                ColorSequenceKeypoint.new(0, Color3.fromRGB(27, 32, 48)),     -- Center color (original)
-                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(22, 26, 38)),   -- Mid point slightly darker
-                ColorSequenceKeypoint.new(1, Color3.fromRGB(18, 21, 31))      -- Edges darkest
+                ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 24, 35)),
+                ColorSequenceKeypoint.new(0.5, Color3.fromRGB(15, 18, 26)),
+                ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 12, 18))
             })
-            gradient.Rotation = 45 -- Diagonal gradient for better effect
-            gradient.Parent = btn
+            gradient.Rotation = 45
+            gradient.Parent = btnBg
 
-            local btnCorner = Instance.new("UICorner")
-            btnCorner.CornerRadius = UDim.new(0, 12)
-            btnCorner.Parent = btn
+            -- Corner for background
+            local btnBgCorner = Instance.new("UICorner")
+            btnBgCorner.CornerRadius = UDim.new(0, 12)
+            btnBgCorner.Parent = btnBg
 
-            local btnStroke = Instance.new("UIStroke")
-            btnStroke.Thickness = 1
-            btnStroke.Color = COLORS.outline
-            btnStroke.Transparency = 0.4
-            btnStroke.Parent = btn
+            -- Stroke for background
+            local btnBgStroke = Instance.new("UIStroke")
+            btnBgStroke.Thickness = 1
+            btnBgStroke.Color = COLORS.outline
+            btnBgStroke.Transparency = 0.4
+            btnBgStroke.Parent = btnBg
 
-            -- Enhanced hover effect with gradient
+            -- Create actual button on top
+            local btn = Instance.new("TextButton")
+            btn.Name = name .. "Button"
+            btn.Size = UDim2.new(1, 0, 1, 0)
+            btn.Position = UDim2.new(0, 0, 0, 0)
+            btn.BackgroundTransparency = 1 -- Fully transparent background
+            btn.Text = name
+            btn.TextColor3 = Color3.fromRGB(220, 225, 235) -- Light grey text
+            btn.Font = Enum.Font.GothamBold
+            btn.TextSize = 16
+            btn.ZIndex = 3 -- Ensure text is above gradient
+            btn.Parent = btnBg
+
+            -- Enhanced hover effect
             btn.MouseEnter:Connect(function()
                 gradient.Transparency = NumberSequence.new({
                     NumberSequenceKeypoint.new(0, 0),
                     NumberSequenceKeypoint.new(0.5, 0.05),
                     NumberSequenceKeypoint.new(1, 0.2)
                 })
-                btnStroke.Transparency = 0.2
+                btnBgStroke.Transparency = 0.2
             end)
 
             btn.MouseLeave:Connect(function()
@@ -996,7 +1008,7 @@ local function showButtonList()
                     NumberSequenceKeypoint.new(0.5, 0.1),
                     NumberSequenceKeypoint.new(1, 0.3)
                 })
-                btnStroke.Transparency = 0.4
+                btnBgStroke.Transparency = 0.4
             end)
 
             btn.MouseButton1Click:Connect(function()
