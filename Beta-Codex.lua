@@ -48,14 +48,13 @@ mainStroke.Color = Color3.fromRGB(20, 24, 35) -- Darker, less blue outline
 mainStroke.Transparency = 0.7 -- More transparent
 mainStroke.Parent = mainFrame
 
--- Adjust button dimensions and spacing
-local titleBtnW = 130 -- Adjusted width to match red line marker
-local titleBtnH = 28 -- Slightly taller buttons
-local titleBtnOffset = 22 -- Base offset from edges
-local titleSpacing = 45 -- Space between buttons and title (yellow line)
-
--- Title Bar
+-- Title Bar (adjusted for new dimensions)
 local titleBarHeight = 40 -- Increased height slightly
+local titleBtnW = 160 -- Match main menu button width
+local titleBtnH = 24
+local titleBtnOffset = 22 -- Match main menu grid offset
+local gapX = 16
+local offsetX = 22
 
 -- Title Bar
 local titleBar = Instance.new("Frame")
@@ -68,24 +67,24 @@ titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
 
--- Title Label with adjusted spacing
+-- Title Label with adjusted Y position
 titleLabel = Instance.new("TextLabel")
 titleLabel.Name = "TitleLabel"
-titleLabel.Size = UDim2.new(1, -(2 * (titleBtnW + titleSpacing)), 1, 0) -- Account for spacing on both sides
-titleLabel.Position = UDim2.new(0.5, 0, 0, 0)
+titleLabel.Size = UDim2.new(1, 0, 1, 0)
+titleLabel.Position = UDim2.new(0, 0, 0, 0)
 titleLabel.BackgroundTransparency = 1
 titleLabel.Text = "Delta Codex"
 titleLabel.TextColor3 = Color3.fromRGB(220, 225, 235)
 titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextSize = 17
 titleLabel.TextXAlignment = Enum.TextXAlignment.Center
-titleLabel.TextYAlignment = Enum.TextYAlignment.Top
+titleLabel.TextYAlignment = Enum.TextYAlignment.Top -- Align to top
 titleLabel.Parent = titleBar
 titleLabel.ZIndex = 3
 
 -- Add padding to move text down
 local textPadding = Instance.new("UIPadding")
-textPadding.PaddingTop = UDim.new(0, 12)
+textPadding.PaddingTop = UDim.new(0, 12) -- Adjust this value to match the image
 textPadding.Parent = titleLabel
 
 -- Check if titleLabel is initialized
@@ -160,14 +159,14 @@ local function createStyledButton(name, parent, size, position)
     return btn
 end
 
--- Create title bar buttons with adjusted positions
-local minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 6))
+-- Create title bar buttons with adjusted width and positions
+local minimizeBtn = createStyledButton("Minimize", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
 minimizeBtn.Visible = true
 
-backBtn = createStyledButton("Back", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 6))
+backBtn = createStyledButton("Back", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(0, titleBtnOffset, 0, 8))
 backBtn.Visible = false
 
-closeBtn = createStyledButton("Close", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(1, -(titleBtnOffset + titleBtnW), 0, 6))
+closeBtn = createStyledButton("Close", titleBar, UDim2.new(0, titleBtnW, 0, titleBtnH), UDim2.new(1, -(titleBtnOffset + titleBtnW), 0, 8))
 
 -- Content Panel (for both button list and context screens)
 local contentPanel = Instance.new("Frame")
