@@ -1,17 +1,11 @@
 -- Codex.lua: Compact, Dark & Blue UI for Fruit Blox (Roblox)
 -- Modern, compact, screen-switching design
 
--- Services
-local TweenService = game:GetService("TweenService")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
-
 -- Dark & Blue color palette
 local COLORS = {
     surface = Color3.fromRGB(18, 22, 32),
-    surfaceVariant = Color3.fromRGB(30, 35, 45),  -- Adjusted for menu buttons
-    primary = Color3.fromRGB(36, 110, 255),
+    surfaceVariant = Color3.fromRGB(27, 32, 48),
+    primary = Color3.fromRGB(36, 110, 255), -- Blue accent (customize this for your own Material You look!)
     onPrimary = Color3.fromRGB(255, 255, 255),
     onSurface = Color3.fromRGB(220, 230, 255),
     outline = Color3.fromRGB(40, 65, 120),
@@ -34,27 +28,15 @@ screenGui.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGu
 -- Check if screenGui is initialized
 if not screenGui then debugPrint("screenGui is not initialized") end
 
--- Constants for layout (matching main menu exactly)
-local EDGE_PADDING = 24  -- Increased from 22 to 24 for better edge spacing
-local BUTTON_WIDTH = 160
-local BUTTON_HEIGHT = 30
-local GAP_X = 20  -- Increased from 16 to 20 for better horizontal spacing
-local GAP_Y = 14  -- Increased from 10 to 14 for better vertical spacing
-local TITLE_BAR_HEIGHT = 38  -- Reduced from 42 to 38 for closer feel
-
--- Content Panel offset from title bar
-local CONTENT_OFFSET = 4  -- Reduced from 6 to 4 for tighter spacing
-
--- Main Frame (compact)
+-- Main Frame (adjusted size and position)
 local mainFrame = Instance.new("Frame")
 mainFrame.Name = "MainFrame"
-mainFrame.Size = UDim2.new(0, 380, 0, 280)
-mainFrame.Position = UDim2.new(0.5, -190, 0.5, -170)
-mainFrame.BackgroundColor3 = COLORS.surface  -- Using consistent surface color
-mainFrame.BackgroundTransparency = 0
+mainFrame.Size = UDim2.new(0, 380, 0, 340) -- Reduced height to match image
+mainFrame.Position = UDim2.new(0.5, -190, 0.45, -170) -- Moved up slightly and centered
+mainFrame.BackgroundColor3 = Color3.fromRGB(10, 13, 22) -- much darker
 mainFrame.BorderSizePixel = 0
+mainFrame.BackgroundTransparency = 0.15 -- Increased transparency
 mainFrame.Parent = screenGui
-
 local mainCorner = Instance.new("UICorner")
 mainCorner.CornerRadius = UDim.new(0, 14)
 mainCorner.Parent = mainFrame
@@ -65,215 +47,133 @@ mainStroke.Color = COLORS.outline
 mainStroke.Transparency = 0.3
 mainStroke.Parent = mainFrame
 
--- Store original sizes for animations
-local originalMainFrameSize = mainFrame.Size
-local originalMainFramePosition = mainFrame.Position
-local minimizedTitleBarWidth = 120 -- Width when minimized to just show "Delta Codex"
-local isMinimized = false
+-- Title Bar (adjusted for new dimensions)
+local titleBarHeight = 40 -- Increased height slightly
+local btnW, btnH = 160, 32
+local gapX = 16
+local offsetX = 22
 
--- Title Bar setup
 local titleBar = Instance.new("Frame")
 titleBar.Name = "TitleBar"
-titleBar.Size = UDim2.new(1, 0, 0, TITLE_BAR_HEIGHT)
+titleBar.Size = UDim2.new(1, 0, 0, titleBarHeight)
 titleBar.Position = UDim2.new(0, 0, 0, 0)
-titleBar.BackgroundTransparency = 1
+titleBar.BackgroundColor3 = Color3.fromRGB(10, 13, 22) -- much darker shade
+titleBar.BackgroundTransparency = 0.15 -- Increased transparency
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 titleBar.ZIndex = 2
 
--- Title Button (centered)
-local titleButton = Instance.new("TextButton")
-titleButton.Name = "TitleButton"
-titleButton.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-titleButton.Position = UDim2.new(0.5, -BUTTON_WIDTH/2, 0.5, -BUTTON_HEIGHT/2)
-titleButton.BackgroundTransparency = 1
-titleButton.Text = "Delta Codex"
-titleButton.TextColor3 = COLORS.onSurface
-titleButton.Font = Enum.Font.GothamBold
-titleButton.TextSize = 16
-titleButton.AutoButtonColor = false
-titleButton.Parent = titleBar
-titleButton.ZIndex = 3
+-- Check if titleBar is initialized
+if not titleBar then debugPrint("titleBar is not initialized") end
 
--- Back button (left grid alignment)
-local backBtn = Instance.new("TextButton")
-backBtn.Name = "BackButton"
-backBtn.Size = UDim2.new(0, BUTTON_WIDTH/2, 0, BUTTON_HEIGHT)
-backBtn.Position = UDim2.new(0, EDGE_PADDING, 0.5, -BUTTON_HEIGHT/2)
-backBtn.BackgroundColor3 = COLORS.surfaceVariant
-backBtn.BackgroundTransparency = 0.1
-backBtn.Text = "Back"
-backBtn.TextColor3 = COLORS.onSurface
-backBtn.Font = Enum.Font.GothamSemibold
-backBtn.TextSize = 16
-backBtn.AutoButtonColor = true
-backBtn.Visible = false
-backBtn.Parent = titleBar
-backBtn.ZIndex = 3
+-- Make only the title bar draggable
+-- This ensures the UI is always draggable by the title bar, regardless of panel
+-- and that scroll frames and other content are not affected
+-- (Roblox: set Active and Draggable on the Frame you want to drag)
 
-local backCorner = Instance.new("UICorner")
-backCorner.CornerRadius = UDim.new(0, 8)
-backCorner.Parent = backBtn
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 14)
+titleCorner.Parent = titleBar
 
--- Close button (right grid alignment)
-local closeBtn = Instance.new("TextButton")
-closeBtn.Name = "CloseButton"
-closeBtn.Size = UDim2.new(0, BUTTON_WIDTH/2, 0, BUTTON_HEIGHT)
--- Align with the right edge of the rightmost main menu button
-closeBtn.Position = UDim2.new(0, mainFrame.Size.X.Offset - EDGE_PADDING - BUTTON_WIDTH/2, 0.5, -BUTTON_HEIGHT/2)
-closeBtn.BackgroundColor3 = COLORS.surfaceVariant
-closeBtn.BackgroundTransparency = 0.1
-closeBtn.Text = "Close"
-closeBtn.TextColor3 = COLORS.onSurface
-closeBtn.Font = Enum.Font.GothamSemibold
-closeBtn.TextSize = 16
-closeBtn.AutoButtonColor = true
-closeBtn.Parent = titleBar
-closeBtn.ZIndex = 3
-
-local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 8)
-closeCorner.Parent = closeBtn
-
--- Create a clickable area in the center of title bar (avoiding buttons)
-local titleClickArea = Instance.new("TextButton")
-titleClickArea.Name = "TitleClickArea"
-titleClickArea.Size = UDim2.new(1, -(2 * (EDGE_PADDING + BUTTON_WIDTH + 10)), 1, 0)  -- Width accounting for buttons and padding
-titleClickArea.Position = UDim2.new(0, EDGE_PADDING + BUTTON_WIDTH + 5, 0, 0)  -- Positioned after back button
-titleClickArea.BackgroundTransparency = 1
-titleClickArea.Text = ""
-titleClickArea.Parent = titleBar
-titleClickArea.ZIndex = 3
-
--- Title Label (centered in click area)
+-- Title Label (centered, 'Delta Codex')
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Name = "TitleLabel"
-titleLabel.Size = UDim2.new(1, -20, 1, 0)
-titleLabel.Position = UDim2.new(0, 10, 0, 0)
+titleLabel.Size = UDim2.new(1, -2 * (offsetX + btnW), 1, 0)
+titleLabel.Position = UDim2.new(0, offsetX + btnW, 0, 4) -- move down for centering in taller title bar
 titleLabel.BackgroundTransparency = 1
 titleLabel.Text = "Delta Codex"
 titleLabel.TextColor3 = COLORS.onSurface
 titleLabel.Font = Enum.Font.GothamBold
 titleLabel.TextSize = 17
 titleLabel.TextXAlignment = Enum.TextXAlignment.Center
-titleLabel.Parent = titleClickArea
+titleLabel.Parent = titleBar
 titleLabel.ZIndex = 3
 
--- Store original positions
-local originalTitleLabelPosition = titleLabel.Position
+-- Check if titleLabel is initialized
+if not titleLabel then debugPrint("titleLabel is not initialized") end
 
--- Add visual feedback for the click area
-local function onDown()
-    -- Remove background color change, keeping the titlebar static
-end
+-- Make back button smaller for title bar
+local backBtnW, backBtnH = 80, 24  -- new, smaller size for title bar buttons
 
-local function onUp()
-    -- Remove background color change, keeping the titlebar static
-end
+-- Back Button (aligned with first grid column, perfectly aligned with Close button)
+local backBtn = Instance.new("TextButton")
+backBtn.Name = "BackButton"
+backBtn.Size = UDim2.new(0, backBtnW, 0, backBtnH)
+backBtn.Position = UDim2.new(0, offsetX, 0.5, -backBtnH/2 + 4) -- move down for centering
+backBtn.BackgroundColor3 = COLORS.surfaceVariant
+backBtn.Text = "Back"
+backBtn.TextColor3 = COLORS.onSurface
+backBtn.Font = Enum.Font.GothamSemibold
+backBtn.TextSize = 15
+backBtn.AutoButtonColor = true
+backBtn.Visible = false
+backBtn.Parent = titleBar
+backBtn.ZIndex = 3
 
-titleClickArea.MouseButton1Down:Connect(onDown)
-titleClickArea.MouseButton1Up:Connect(onUp)
+-- Check if backBtn is initialized
+if not backBtn then debugPrint("backBtn is not initialized") end
 
--- Animation Functions
-local function minimizeUI()
-    if isMinimized then return end
-    isMinimized = true
-    
-    -- Visual feedback
-    TweenService:Create(titleButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Cubic),
-        {
-            BackgroundColor3 = Color3.fromRGB(30, 39, 66),
-            TextColor3 = COLORS.primary
-        }
-    ):Play()
-    
-    -- Animate mainFrame
-    local mainFrameTween = TweenService:Create(mainFrame, 
-        TweenInfo.new(0.3, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out),
-        {
-            Size = UDim2.new(0, textSize.X + padding + 20, 0, titleBarHeight),  -- Added padding for minimized state
-            Position = UDim2.new(0.5, -(textSize.X + padding + 20)/2, 0.5, -titleBarHeight/2)
-        }
-    )
-    
-    -- Hide content
-    contentPanel.Visible = false
-    closeBtn.Visible = false
-    backBtn.Visible = false
-    
-    mainFrameTween:Play()
-    wait(0.3)
-    
-    -- Reset visual feedback
-    onTitleUnhover()
-end
+local backCorner = Instance.new("UICorner")
+backCorner.CornerRadius = UDim.new(0, 10)
+backCorner.Parent = backBtn
 
-local function maximizeUI()
-    if not isMinimized then return end
-    isMinimized = false
-    
-    -- Visual feedback
-    TweenService:Create(titleButton,
-        TweenInfo.new(0.2, Enum.EasingStyle.Cubic),
-        {
-            BackgroundColor3 = Color3.fromRGB(30, 39, 66),
-            TextColor3 = COLORS.primary
-        }
-    ):Play()
-    
-    -- Animate mainFrame
-    local mainFrameTween = TweenService:Create(mainFrame,
-        TweenInfo.new(0.3, Enum.EasingStyle.Cubic, Enum.EasingDirection.Out),
-        {
-            Size = originalMainFrameSize,
-            Position = originalMainFramePosition
-        }
-    )
-    
-    mainFrameTween:Play()
-    wait(0.3)
-    
-    -- Show content
-    contentPanel.Visible = true
-    closeBtn.Visible = true
-    if backBtn.Visible then  -- Only show back button if it was visible before
-        backBtn.Visible = true
-    end
-    
-    -- Reset visual feedback
-    onTitleUnhover()
-end
+local backStroke = Instance.new("UIStroke")
+backStroke.Thickness = 1
+backStroke.Color = COLORS.outline
+backStroke.Transparency = 0.4
+backStroke.Parent = backBtn
 
--- Connect minimize/maximize to title button
-titleButton.MouseButton1Click:Connect(function()
-    if isMinimized then
-        maximizeUI()
-    else
-        minimizeUI()
-    end
-end)
+-- Make close button smaller for title bar
+-- Close Button (right-aligned in title bar)
+local closeBtn = Instance.new("TextButton")
+closeBtn.Name = "CloseButton"
+closeBtn.Size = UDim2.new(0, backBtnW, 0, backBtnH)
+closeBtn.Position = UDim2.new(1, -offsetX - backBtnW, 0.5, -backBtnH/2 + 4) -- move down for centering
+closeBtn.BackgroundColor3 = COLORS.surfaceVariant
+closeBtn.Text = "Close"
+closeBtn.TextColor3 = COLORS.onSurface
+closeBtn.Font = Enum.Font.GothamSemibold
+closeBtn.TextSize = 15
+closeBtn.AutoButtonColor = true
+closeBtn.Parent = titleBar
+closeBtn.ZIndex = 3
 
--- Make sure buttons work
-closeBtn.MouseButton1Click:Connect(function()
-    screenGui.Enabled = false
-end)
+-- Check if closeBtn is initialized
+if not closeBtn then debugPrint("closeBtn is not initialized") end
 
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 10)
+closeCorner.Parent = closeBtn
+
+local closeStroke = Instance.new("UIStroke")
+closeStroke.Thickness = 1
+closeStroke.Color = COLORS.outline
+closeStroke.Transparency = 0.4
+closeStroke.Parent = closeBtn
+
+-- Add debug prints to button connections
 backBtn.MouseButton1Click:Connect(function()
     debugPrint("Back button clicked")
     showButtonList()
     backBtn.Visible = false
-    titleLabel.Visible = false  -- Hide the title label
-    titleButton.Visible = true  -- Show the title button
+    titleLabel.Text = "Delta Codex"  -- Reset title to 'Delta Codex'
 end)
 
--- Content Panel with adjusted spacing
+if closeBtn then
+    closeBtn.MouseButton1Click:Connect(function()
+        debugPrint("Close button clicked")
+        screenGui.Enabled = false
+    end)
+else
+    debugPrint("closeBtn is not initialized")
+end
+
+-- Content Panel (for both button list and context screens)
 local contentPanel = Instance.new("Frame")
 contentPanel.Name = "ContentPanel"
-contentPanel.Size = UDim2.new(1, 0, 1, -(TITLE_BAR_HEIGHT + CONTENT_OFFSET))
-contentPanel.Position = UDim2.new(0, 0, 0, TITLE_BAR_HEIGHT)
-contentPanel.BackgroundColor3 = COLORS.surface  -- Using consistent surface color
-contentPanel.BackgroundTransparency = 0
+contentPanel.Size = UDim2.new(1, 0, 1, -titleBarHeight)
+contentPanel.Position = UDim2.new(0, 0, 0, titleBarHeight)
+contentPanel.BackgroundTransparency = 1
 contentPanel.Parent = mainFrame
 
 -- Check if contentPanel is initialized
@@ -394,7 +294,7 @@ local function createInfoCard(parent, label, value, showProgress)
     local card = Instance.new("Frame")
     card.Size = UDim2.new(1, 0, 0, showProgress and 64 or 48)
     card.BackgroundColor3 = COLORS.surfaceVariant
-    card.BackgroundTransparency = 0.1  -- Added slight transparency
+    card.BackgroundTransparency = 0.1
     card.Parent = parent
 
     local corner = Instance.new("UICorner")
@@ -413,24 +313,24 @@ local function createInfoCard(parent, label, value, showProgress)
     shadow.Size = UDim2.new(1, 8, 1, 8)
     shadow.Position = UDim2.new(0, -4, 0, -2)
     shadow.BackgroundTransparency = 1
-    shadow.Image = "rbxassetid://1316045217"
-    shadow.ImageTransparency = 0.9  -- Increased shadow transparency
+    shadow.Image = "rbxassetid://1316045217" -- soft shadow asset
+    shadow.ImageTransparency = 0.85
     shadow.ZIndex = 0
     shadow.Parent = card
 
     -- Hover effect
     local function onHover()
         debugPrint("onHover called")
-        createTween(card, {BackgroundTransparency = 0.05}, 0.2):Play()
+        createTween(card, {BackgroundTransparency = 0}, 0.2):Play()
         createTween(stroke, {Transparency = 0.2}, 0.2):Play()
-        createTween(shadow, {ImageTransparency = 0.85}, 0.2):Play()
+        createTween(shadow, {ImageTransparency = 0.7}, 0.2):Play()
     end
 
     local function onUnhover()
         debugPrint("onUnhover called")
         createTween(card, {BackgroundTransparency = 0.1}, 0.2):Play()
         createTween(stroke, {Transparency = 0.4}, 0.2):Play()
-        createTween(shadow, {ImageTransparency = 0.9}, 0.2):Play()
+        createTween(shadow, {ImageTransparency = 0.85}, 0.2):Play()
     end
 
     card.MouseEnter:Connect(onHover)
@@ -497,8 +397,6 @@ local function buildOverviewPanel(parent)
     scrollFrame.ScrollBarImageColor3 = COLORS.primary
     scrollFrame.ScrollingDirection = Enum.ScrollingDirection.Y
     scrollFrame.ScrollBarImageTransparency = 0.5
-    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)  -- Auto-adjust canvas size
-    scrollFrame.AutomaticCanvasSize = Enum.AutomaticCanvasSize.Y  -- Enable automatic canvas sizing
     scrollFrame.Parent = parent
 
     -- Add smooth scrolling behavior
@@ -1026,29 +924,28 @@ local panelBuilders = {
     end,
 }
 
--- Button list function with adjusted initial offset
+-- Debug print for showButtonList function
 local function showButtonList()
     debugPrint("showButtonList called")
     clearContent()
     backBtn.Visible = false
-    titleLabel.Visible = false
-    titleButton.Visible = true
+    titleLabel.Text = "Delta Codex"
     contentPanel.Visible = true
-    
+    local btnW, btnH = 160, 36
+    local gapX, gapY = 16, 8 -- Reduced vertical gap
     local cols, rows = 2, 6
-    local offsetY = 6  -- Reduced from 8 to 6 for tighter spacing with title bar
-
+    local offsetX = 22
+    local offsetY = 12 -- Adjusted top offset
     for i, name in ipairs(buttonNames) do
         if name ~= "" then
             local col = ((i-1) % cols)
             local row = math.floor((i-1) / cols)
             local btn = Instance.new("TextButton")
             btn.Name = name .. "Button"
-            btn.Size = UDim2.new(0, BUTTON_WIDTH, 0, BUTTON_HEIGHT)
-            btn.Position = UDim2.new(0, EDGE_PADDING + col * (BUTTON_WIDTH + GAP_X), 
-                                   0, offsetY + row * (BUTTON_HEIGHT + GAP_Y))
+            btn.Size = UDim2.new(0, btnW, 0, btnH)
+            btn.Position = UDim2.new(0, offsetX + col * (btnW + gapX), 0, offsetY + row * (btnH + gapY))
             btn.BackgroundColor3 = COLORS.surfaceVariant
-            btn.BackgroundTransparency = 0.1
+            btn.BackgroundTransparency = 0.1 -- Added slight transparency
             btn.Text = name
             btn.TextColor3 = COLORS.onSurface
             btn.Font = Enum.Font.GothamSemibold
@@ -1058,37 +955,20 @@ local function showButtonList()
             btn.ZIndex = 2
 
             local btnCorner = Instance.new("UICorner")
-            btnCorner.CornerRadius = UDim.new(0, 8)
+            btnCorner.CornerRadius = UDim.new(0, 12)
             btnCorner.Parent = btn
 
-            -- Add hover effects
-            btn.MouseEnter:Connect(function()
-                TweenService:Create(btn, 
-                    TweenInfo.new(0.2, Enum.EasingStyle.Quad), 
-                    {
-                        BackgroundTransparency = 0.05,
-                        TextColor3 = COLORS.primary
-                    }
-                ):Play()
-            end)
-
-            btn.MouseLeave:Connect(function()
-                TweenService:Create(btn, 
-                    TweenInfo.new(0.2, Enum.EasingStyle.Quad), 
-                    {
-                        BackgroundTransparency = 0.1,
-                        TextColor3 = COLORS.onSurface
-                    }
-                ):Play()
-            end)
+            local btnStroke = Instance.new("UIStroke")
+            btnStroke.Thickness = 1
+            btnStroke.Color = COLORS.outline
+            btnStroke.Transparency = 0.4
+            btnStroke.Parent = btn
 
             btn.MouseButton1Click:Connect(function()
                 debugPrint("Button clicked")
                 contentPanel.Visible = false
                 backBtn.Visible = true
                 titleLabel.Text = name
-                titleLabel.Visible = true  -- Show the title label
-                titleButton.Visible = false  -- Hide the title button
                 if panelBuilders[name] then
                     clearContent()
                     panelBuilders[name](contentPanel)
@@ -1107,8 +987,7 @@ backBtn.MouseButton1Click:Connect(function()
     debugPrint("Back button clicked")
     showButtonList()
     backBtn.Visible = false
-    titleLabel.Visible = false  -- Hide the title label
-    titleButton.Visible = true  -- Show the title button
+    titleLabel.Text = "Delta Codex"  -- Reset title to 'Delta Codex'
 end)
 
 -- Ensure Close button always works
